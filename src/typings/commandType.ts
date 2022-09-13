@@ -16,5 +16,6 @@ export type commandOptions = {
     run: (options: commandRunOptions) => any
     dm?:boolean;
     options?: ApplicationCommandOption[],
-    whitelist: boolean
+    whitelist?: boolean,
+    ownerOnly?: boolean;
 } & ChatInputApplicationCommandData;

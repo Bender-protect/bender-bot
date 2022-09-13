@@ -1,31 +1,36 @@
-import { ApplicationCommandDataResolvable, Client, ClientEvents, Collection } from "discord.js";
+import { ApplicationCommandDataResolvable, Client, ClientEvents, Collection, TeamMemberMembershipState } from "discord.js";
 import { commandOptions } from "../typings/commandType";
 import { database } from "../typings/Database";
 import { createConnection } from 'mysql';
 import { readdirSync } from "fs";
 import { Event } from "./Event";
+import { configsManager } from "./ConfigsManager";
 
 export class BenderClient extends Client {
     #path: string = __filename.endsWith('.ts') ? 'src':'dist';
     db: database;
     commands: Collection<string, commandOptions> = new Collection();
+    configsManager: configsManager;
 
     constructor() {
         super({
             intents: [32767]
         });
     }
-    start() {
+    public start() {
         const token = process.env[`${process.env.environment}Token`];
         this.login(token);
         this.loadModules();
     }
-    loadModules() {
+    private loadModules() {
         this.loadCommands();
         this.loadEvents();
         this.connectDb();
     }
-    connectDb () {
+    private setConfigsManager() {
+        this.configsManager = new configsManager(this, this.db);
+    }
+    private connectDb () {
         this.db = createConnection({
             user: process.env.DBU,
             host: process.env.DBH,
@@ -35,9 +40,11 @@ export class BenderClient extends Client {
 
         this.db.connect((error) => {
             if (error) throw error;
+
+            this.setConfigsManager();
         });
     }
-    loadCommands() {
+    private loadCommands() {
         const cmds: ApplicationCommandDataResolvable[] = [];
         readdirSync(`./${this.#path}/commands`).forEach((fileName) => {
             const file: commandOptions = require(`../commands/${fileName}`).default;
@@ -50,7 +57,7 @@ export class BenderClient extends Client {
             this.application.commands.set(cmds);
         });
     }
-    loadEvents() {
+    private loadEvents() {
         readdirSync(`./${this.#path}/events`).forEach((fileName) => {
             const file: Event<keyof ClientEvents> = require(`../events/${fileName}`).default;
 

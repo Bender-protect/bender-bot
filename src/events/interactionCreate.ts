@@ -1,7 +1,7 @@
-import { ApplicationCommandDataResolvable, CommandInteractionOptionResolver } from "discord.js";
+import { CommandInteractionOptionResolver } from "discord.js";
 import { Event } from "../structures/Event";
 import { BenderInteraction } from "../typings/commandType";
-import { noConfigured, notWhitelisted, sqlError } from "../utils/embeds";
+import { noConfigured, notWhitelisted, ownerOnly, sqlError } from "../utils/embeds";
 
 export default new Event('interactionCreate', async(inter) => {
     const interaction = inter as BenderInteraction;
@@ -18,7 +18,8 @@ export default new Event('interactionCreate', async(inter) => {
                 client: interaction.client
             });
         };
-        if (cmd.whitelist === true && interaction.guild) {
+        if (cmd?.ownerOnly === true && interaction.guild && interaction.guild.ownerId !== interaction.user.id) return interaction.reply({ embeds: [ ownerOnly(interaction.user, interaction.guild.ownerId) ] })
+        if (cmd?.whitelist === true && interaction.guild) {
             await interaction.deferReply();
             interaction.client.db.query(`SELECT users FROM whitelist WHERE guild_id="${interaction.guild.id}"`, (error, request) => {
                 if (error) return interaction.editReply({ embeds: [ sqlError(interaction.user) ] }).catch(() => {});

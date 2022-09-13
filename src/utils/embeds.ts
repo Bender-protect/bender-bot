@@ -1,4 +1,4 @@
-import { EmbedBuilder, User } from "discord.js";
+import { BaseGuildVoiceChannel, EmbedBuilder, User } from "discord.js";
 
 const basic = (user: User) => {
     return new EmbedBuilder()
@@ -25,3 +25,9 @@ export const notWhitelisted = (user: User) => {
         .setDescription(`Vous n'êtes pas whitelisté sur le serveur, vous ne pouvez pas effectuer cette action`)
         .setColor('#ff0000')
 };
+export const ownerOnly = (user: User, ownerId: string) => {
+    return basic(user)
+        .setTitle("Propriétaire uniquement")
+        .setDescription(`Cette commande n'est exécutable que par le propriétaire du serveur ( <@${ownerId}> )`)
+        .setColor('#ff0000')
+}
