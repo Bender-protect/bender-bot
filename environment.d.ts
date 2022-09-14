@@ -1,7 +1,9 @@
 declare global {
     namespace NodeJS {
         interface ProcessEnv {
-            token: string,
+            debugToken: string,
+            productionToken: string,
+            developpementToken: string,
             DB: string,
             DBU: string, // Database user
             DBH: string, // Database hoster

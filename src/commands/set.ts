@@ -1,5 +1,7 @@
 import { ApplicationCommandOptionType } from "discord.js";
 import { Command } from "../structures/Command";
+import { configs } from "../typings/configs";
+import { config } from "../utils/embeds";
 
 export default new Command({
     name: 'set',
@@ -7,7 +9,11 @@ export default new Command({
     ownerOnly: true,
     dm: false,
     run: ({ interaction, args }) => {
+        const option = args.getString('option', true) as keyof configs;
+        const value = args.getBoolean('valeur', true);
 
+        interaction.client.configsManager.set(interaction.guild.id, option, value);
+        interaction.reply({ embeds: [ config(interaction.user, option, value) ] }).catch(() => {});
     },
     options: [
         {

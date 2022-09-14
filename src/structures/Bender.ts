@@ -29,6 +29,7 @@ export class BenderClient extends Client {
     }
     private setConfigsManager() {
         this.configsManager = new configsManager(this, this.db);
+        this.configsManager.start();
     }
     private connectDb () {
         this.db = createConnection({

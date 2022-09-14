@@ -1,4 +1,5 @@
 import { BaseGuildVoiceChannel, EmbedBuilder, User } from "discord.js";
+import { configs, configTypes } from "../typings/configs";
 
 const basic = (user: User) => {
     return new EmbedBuilder()
@@ -30,4 +31,11 @@ export const ownerOnly = (user: User, ownerId: string) => {
         .setTitle("Propriétaire uniquement")
         .setDescription(`Cette commande n'est exécutable que par le propriétaire du serveur ( <@${ownerId}> )`)
         .setColor('#ff0000')
+};
+export const config = (user: User, option: keyof configs, value: boolean) => {
+    const param = configTypes.find(x => x.value === option);
+    return basic(user)
+        .setTitle("Configuration")
+        .setDescription(`Le paramètre \`${param.name}\` a été **${value ? 'activé' : 'désactivé'}**`)
+        .setColor(value ? '#00ff00' : '#ff0000')
 }
