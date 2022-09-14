@@ -1,7 +1,7 @@
 import { ApplicationCommandOptionType } from "discord.js";
 import { Command } from "../structures/Command";
 import { configs } from "../typings/configs";
-import { config } from "../utils/embeds";
+import { config, setup, setupEd } from "../utils/embeds";
 
 export default new Command({
     name: 'set',
@@ -9,25 +9,46 @@ export default new Command({
     ownerOnly: true,
     dm: false,
     run: ({ interaction, args }) => {
-        const option = args.getString('option', true) as keyof configs;
-        const value = args.getBoolean('valeur', true);
+        const subcommand = args.getSubcommand();
 
-        interaction.client.configsManager.set(interaction.guild.id, option, value);
-        interaction.reply({ embeds: [ config(interaction.user, option, value) ] }).catch(() => {});
+        if (subcommand === 'initialiser') {
+            if (interaction.client.configsManager.has(interaction.guild.id)) return interaction.reply({ embeds: [ setupEd(interaction.user) ] }).catch(() => {});
+
+            interaction.client.configsManager.setup(interaction.guild.id);
+            interaction.reply({ embeds: [ setup(interaction.user) ] }).catch(() => {});
+        } else {
+            const option = args.getString('option', true) as keyof configs;
+            const value = args.getBoolean('valeur', true);
+    
+            interaction.client.configsManager.set(interaction.guild.id, option, value);
+            interaction.reply({ embeds: [ config(interaction.user, option, value) ] }).catch(() => {});
+        };
     },
     options: [
         {
-            name: 'option',
-            description: "Paramètre à configurer",
-            type: ApplicationCommandOptionType.String,
-            required: true,
-            autocomplete: true
+            name: 'initialiser',
+            type: ApplicationCommandOptionType.Subcommand,
+            description: "Initialise les configurations de Bender sur votre serveur"
         },
         {
-            name: 'valeur',
-            description: "Valeur du paramètre",
-            type: ApplicationCommandOptionType.Boolean,
-            required: true
+            name: 'configurer',
+            type: ApplicationCommandOptionType.Subcommand,
+            description: "Configure un paramètre",
+            options: [
+                {
+                    name: 'option',
+                    description: "Paramètre à configurer",
+                    type: ApplicationCommandOptionType.String,
+                    required: true,
+                    autocomplete: true
+                },
+                {
+                    name: 'valeur',
+                    description: "Valeur du paramètre",
+                    type: ApplicationCommandOptionType.Boolean,
+                    required: true
+                }
+            ]
         }
     ]
 })

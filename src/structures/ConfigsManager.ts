@@ -12,6 +12,10 @@ export class configsManager {
     }
     public start() {
         this.fillCache();
+
+        setInterval(() => {
+            this.fillCache();
+        }, 30000);
     }
     public set(guild_id: string, key: keyof configs, value: boolean) {
         if (key === 'guild_id') return 'invalid key';
@@ -36,7 +40,16 @@ export class configsManager {
     }
     public has(guild_id: string) {
         return this.#configs.has(guild_id);
+        
+    }
+    public setup(guild_id: string) {
+        if (this.has(guild_id)) return;
 
+        this.db.query(`INSERT INTO configs (guild_id) VALUES ("${guild_id}")`, (err) => {
+            if (err) return console.log(err);
+
+            this.fillCache();
+        });
     }
     private clearCache() {
         this.#configs.clear();
