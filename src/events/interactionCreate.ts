@@ -22,11 +22,16 @@ export default new Event('interactionCreate', async(inter) => {
         if (cmd?.whitelist === true && interaction.guild) {
             await interaction.deferReply();
             interaction.client.db.query(`SELECT users FROM whitelist WHERE guild_id="${interaction.guild.id}"`, (error, request) => {
-                if (error) return interaction.editReply({ embeds: [ sqlError(interaction.user) ] }).catch(() => {});
+                if (error) {
+                    console.log(error);
+                    return interaction.editReply({ embeds: [ sqlError(interaction.user) ] }).catch(() => {})
+                };
 
-                if (request.length === 0) return interaction.editReply({ embeds: [ noConfigured(interaction.user) ] }).catch(() => {});
+                if (interaction.user.id === interaction.guild.ownerId) return run();
+
+                if (request.length === 0) return interaction.editReply({ embeds: [ notWhitelisted(interaction.user) ] }).catch(() => {});
+                
                 const users = JSON.parse(request[0].users);
-
                 if (!users.includes(interaction.user.id)) return interaction.editReply({ embeds: [ notWhitelisted(interaction.user) ] }).catch(() => {});
                 run();
             });
