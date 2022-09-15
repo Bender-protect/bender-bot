@@ -5,12 +5,14 @@ import { createConnection } from 'mysql';
 import { readdirSync } from "fs";
 import { Event } from "./Event";
 import { configsManager } from "./ConfigsManager";
+import { WhitelistManager } from "./whitelistManager";
 
 export class BenderClient extends Client {
     #path: string = __filename.endsWith('.ts') ? 'src':'dist';
     db: database;
     commands: Collection<string, commandOptions> = new Collection();
     configsManager: configsManager;
+    whitelistManager: WhitelistManager;
 
     constructor() {
         super({
@@ -31,13 +33,10 @@ export class BenderClient extends Client {
         this.configsManager = new configsManager(this, this.db);
         this.configsManager.start();
     }
-<<<<<<< Updated upstream
-=======
     private setWhitelistManager() {
         this.whitelistManager = new WhitelistManager(this, this.db);
         this.whitelistManager.start();
     }
->>>>>>> Stashed changes
     private connectDb () {
         this.db = createConnection({
             user: process.env.DBU,
