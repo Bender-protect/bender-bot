@@ -57,7 +57,7 @@ export class WhitelistManager {
     }
     public isWhitelisted(guild: Guild, user_id: string) {
         if (guild.ownerId === user_id) return true;
-        if (user_id !== this.#client.user.id) return true;
+        if (user_id === this.#client.user.id) return true;
         return this.has(guild.id, user_id);
     }
     private query(guild_id: string, array: string[]) {
