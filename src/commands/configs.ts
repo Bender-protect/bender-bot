@@ -4,7 +4,7 @@ import { classic, noConfigured } from "../utils/embeds";
 
 export default new Command({
     name: 'configs',
-    description: "Affiche les configuration faites sur le serveur",
+    description: "Affiche les configurations faites sur le serveur",
     ownerOnly: false,
     whitelist: true,
     dm: false,

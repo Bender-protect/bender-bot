@@ -71,7 +71,7 @@ export default new Command({
             interaction.reply({ embeds: [ classic(interaction.user)
                 .setTitle("Ajouté")
                 .setDescription(`<@${user.id}> a été ajouté à la whiteliste`)
-                .setColor('#ff0000')
+                .setColor('#00ff00')
             ] }).catch(() => {});
         };
         if (subcommand === 'retirer') {
@@ -86,7 +86,7 @@ export default new Command({
             interaction.reply({ embeds: [ classic(interaction.user)
                 .setTitle("Retiré")
                 .setDescription(`<@${user.id}> a été retiré de la whiteliste`)
-                .setColor('#ff0000')
+                .setColor('#00ff00')
             ] }).catch(() => {});
         }
     }
