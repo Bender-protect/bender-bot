@@ -19,4 +19,10 @@ CREATE TABLE configs (
 
 CREATE TABLE gbans (
     users LONGTEXT NOT NULL DEFAULT '[]'
-)
+);
+
+CREATE TABLE antispam (
+    guild_id VARCHAR(255) NOT NULL,
+    count INTEGER(255) NOT NULL DEFAULT '6',
+    time INTEGER(255) NOT NULL DEFAULT '10'
+);
