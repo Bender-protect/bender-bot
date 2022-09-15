@@ -12,6 +12,11 @@ CREATE TABLE configs (
     roleCreate_enable TINYINT(1) NOT NULL DEFAULT "1",
     roleDelete_enable TINYINT(1) NOT NULL DEFAULT "1",
     roleUpdate_enable TINYINT(1) NOT NULL DEFAULT "1",
-    guildBanAdd_enable TINYINT(1) NOT NULL DEFAULT "1",
-    allowBan TINYINT(1) NOT NULL DEFAULT '1'
+    allowBan TINYINT(1) NOT NULL DEFAULT '1',
+    antispam TINYINT(1) NOT NULL DEFAULT "1",
+    gban TINYINT(1) NOT NULL DEFAULT '1'
 );
+
+CREATE TABLE gbans (
+    users LONGTEXT NOT NULL DEFAULT '[]'
+)

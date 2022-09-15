@@ -7,8 +7,9 @@ export type configs = {
     roleCreate_enable: boolean;
     roleDelete_enable: boolean;
     roleUpdate_enable: boolean;
-    guildBanAdd_enable: boolean;
+    gban: boolean;
     allowBan: boolean;
+    antispam: boolean
 };
 
 export const configTypes: { name: string, value: keyof configs }[] = [
@@ -19,6 +20,7 @@ export const configTypes: { name: string, value: keyof configs }[] = [
     { name: 'Création de rôle', value: 'roleCreate_enable' },
     { name: 'Suppression de rôle', value: 'roleDelete_enable' },
     { name: 'Modification de rôle', value: 'roleUpdate_enable' },
-    { name: 'GBan', value: 'guildBanAdd_enable' },
-    { name: 'Autorisation des bannissements', value: 'allowBan' }
+    { name: 'GBan', value: 'gban' },
+    { name: 'Autorisation des bannissements', value: 'allowBan' },
+    { name: 'Antispam', value: 'antispam' }
 ];

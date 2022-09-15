@@ -1,6 +1,6 @@
 import { Bender } from "../bender";
 import { Event } from "../structures/Event";
-import { classic } from "../utils/embeds";
+import { classic, gbanned } from "../utils/embeds";
 
 export default new Event('guildMemberAdd', async(member) => {
     Bender.configsManager.setup(member.guild.id);
@@ -12,5 +12,17 @@ export default new Event('guildMemberAdd', async(member) => {
         ] }).catch(() => {});
 
         member.kick('raidmode').catch(() => {});
+    };
+    if (Bender.configsManager.state(member.guild.id, 'gban')) {
+        Bender.db.query(`SELECT users FROM gbans`, async(err, req) => {
+            if (err) return console.log(err);
+
+            const users: string[] = JSON.parse(req[0].users);
+            if (users.includes(member.id)) {
+                await member.send({ embeds: [ gbanned(member.user) ] }).catch(() => {});
+
+                member.kick('GBanned').catch(() => {});
+            };
+        });
     };
 });

@@ -51,3 +51,9 @@ export const setupEd = (user: User) => {
         .setColor('#ff0000')
         .setTitle("❌ Déjà configuré")
 };
+export const gbanned = (user: User) => {
+    return basic(user)
+        .setTitle("⛔ GBan")
+        .setDescription(`Vous êtes Guilid-ban sur Bender Protect, et ce serveur n'accepte pas les membres GBannis.`)
+        .setColor('#ff0000')
+};
