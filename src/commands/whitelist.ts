@@ -1,4 +1,5 @@
 import { ApplicationCommandOptionType } from "discord.js";
+import { Bender } from "../bender";
 import { Command } from "../structures/Command";
 import { classic } from "../utils/embeds";
 
@@ -44,7 +45,7 @@ export default new Command({
         const subcommand = args.getSubcommand();
 
         if (subcommand === 'liste') {
-            const list = interaction.client.whitelistManager.list(interaction.guild.id);
+            const list = Bender.whitelistManager.list(interaction.guild.id);
 
             if (list.length === 0) return interaction.reply({ embeds: [ classic(interaction.user)
                 .setTitle("Whiteliste vide")
@@ -60,13 +61,13 @@ export default new Command({
         };
         if (subcommand === 'ajouter') {
             const user = args.getUser('utilisateur',  true);
-            if (interaction.client.whitelistManager.has(interaction.guild.id, user.id) || interaction.user.id === interaction.guild.ownerId) return interaction.reply({ embeds: [ classic(interaction.user)
+            if (Bender.whitelistManager.has(interaction.guild.id, user.id) || interaction.user.id === interaction.guild.ownerId) return interaction.reply({ embeds: [ classic(interaction.user)
                 .setTitle("Déjà ajouté")
                 .setDescription(`<@${user.id}> est déjà ajouté à la whiteliste`)
                 .setColor('#ff0000')
             ] }).catch(() => {});
 
-            interaction.client.whitelistManager.set(interaction.guild.id, user.id);
+            Bender.whitelistManager.set(interaction.guild.id, user.id);
             interaction.reply({ embeds: [ classic(interaction.user)
                 .setTitle("Ajouté")
                 .setDescription(`<@${user.id}> a été ajouté à la whiteliste`)
@@ -75,13 +76,13 @@ export default new Command({
         };
         if (subcommand === 'retirer') {
             const user = args.getUser('utilisateur', true);
-            if (!interaction.client.whitelistManager.has(interaction.guild.id, user.id) || interaction.user.id === interaction.guild.ownerId) return interaction.reply({ embeds: [ classic(interaction.user)
+            if (!Bender.whitelistManager.has(interaction.guild.id, user.id) || interaction.user.id === interaction.guild.ownerId) return interaction.reply({ embeds: [ classic(interaction.user)
                 .setTitle("Non-whitelisté")
                 .setDescription(`<@${user.id}> n'est pas whitelisté`)
                 .setColor('#ff0000')
             ] }).catch(() => {});
 
-            interaction.client.whitelistManager.remove(interaction.guild.id, user.id);
+            Bender.whitelistManager.remove(interaction.guild.id, user.id);
             interaction.reply({ embeds: [ classic(interaction.user)
                 .setTitle("Retiré")
                 .setDescription(`<@${user.id}> a été retiré de la whiteliste`)

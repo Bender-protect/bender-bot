@@ -9,7 +9,7 @@ export default new Command({
     whitelist: true,
     dm: false,
     run: ({ interaction }) => {
-        if (!interaction.client.configsManager.has(interaction.guild.id)) return interaction.editReply({ embeds: [ noConfigured(interaction.user) ] }).catch(() => {});
+        if (!interaction.client.configsManager.has(interaction.guild.id)) return interaction.reply({ embeds: [ noConfigured(interaction.user) ] }).catch(() => {});
 
         const confs = interaction.client.configsManager.get(interaction.guild.id);
         const embed = classic(interaction.user)
@@ -36,6 +36,6 @@ export default new Command({
             };
         });
 
-        interaction.editReply({ embeds: [ embed ] }).catch(() => {});
+        interaction.reply({ embeds: [ embed ] }).catch(() => {});
     }
 })
