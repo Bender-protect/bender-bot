@@ -61,7 +61,7 @@ export class WhitelistManager {
         return this.has(guild.id, user_id);
     }
     private query(guild_id: string, array: string[]) {
-        let sql = `UPDATE whitelist SET users="${JSON.stringify(array)}" WHERE guild_id="${guild_id}`;
+        let sql = `UPDATE whitelist SET users="${JSON.stringify(array)}" WHERE guild_id="${guild_id}"`;
         if (!this.guildSetup(guild_id)) sql = `INSERT INTO whitelist (guild_id, users) VALUES ("${guild_id}", "${JSON.stringify(array)}")`;
 
         this.#db.query(sql, (err, req) => {
