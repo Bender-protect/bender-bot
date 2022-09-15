@@ -49,6 +49,7 @@ export class BenderClient extends Client {
             if (error) throw error;
 
             this.setConfigsManager();
+            this.setWhitelistManager();
         });
     }
     private loadCommands() {
