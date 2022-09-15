@@ -8,7 +8,7 @@ export default new Event('channelDelete', async(chan) => {
     const channel = chan as GuildChannel;
     if (channel.isThread()) return;
 
-    const { guild, id, name, parent, permissionOverwrites, type, position } = channel;
+    const { guild, id, name, parent, permissionOverwrites, type } = channel;
     if (guild) {
         const logs = await guild.fetchAuditLogs({ type: AuditLogEvent.ChannelDelete });
 
@@ -30,13 +30,17 @@ export default new Event('channelDelete', async(chan) => {
                         | ChannelType.GuildNewsThread
                         | ChannelType.GuildPrivateThread
                         >,
-                        userLimit: (channel as VoiceChannel).userLimit,
-                        bitrate: (channel as VoiceChannel).bitrate,
                         parent,
-                        position
+                        position: channel.rawPosition
                     }).then((c) => {
                         if (channel.type === ChannelType.GuildText) {
                             c.setNSFW((channel as TextChannel).nsfw);
+                        };
+                        if (channel.type === ChannelType.GuildVoice) {
+                            channel.edit({
+                                userLimit: (channel as VoiceChannel).userLimit,
+                                bitrate: (channel as VoiceChannel).bitrate,
+                            });
                         };
                         
                         if (c.type === ChannelType.GuildText) c.send({ embeds: [ classic(executor)
