@@ -44,10 +44,10 @@ export const setup = (user: User) => {
         .setTitle("✅ Configuré")
         .setDescription(`Bender Protect a été configuré sur votre serveur`)
         .setColor('#00ff00')
-}
+};
 export const setupEd = (user: User) => {
     return basic(user)
         .setDescription(`Bender Protect est déjà configuré sur votre serveur`)
         .setColor('#ff0000')
         .setTitle("❌ Déjà configuré")
-}
+};

@@ -17,6 +17,12 @@ export class configsManager {
             this.fillCache();
         }, 30000);
     }
+    public state(guild_id: string, config: keyof configs) {
+        const confs = this.get(guild_id);
+        if (!confs) return true;
+
+        return confs[config];
+    }
     public set(guild_id: string, key: keyof configs, value: boolean) {
         if (key === 'guild_id') return 'invalid key';
         const bool = value ? '1':'0';
