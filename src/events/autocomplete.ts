@@ -9,5 +9,5 @@ export default new Event('interactionCreate', (inter) => {
         const value = interaction.options.getFocused();
 
         interaction.respond(configTypes.filter(x => x.name.toLowerCase().includes(value.toLowerCase())));
-    }
-})
+    };
+});
