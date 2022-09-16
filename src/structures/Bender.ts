@@ -6,6 +6,7 @@ import { readdirSync } from "fs";
 import { Event } from "./Event";
 import { configsManager } from "./ConfigsManager";
 import { WhitelistManager } from "./whitelistManager";
+import { antispamDataManager } from "./antispamDataManager";
 
 export class BenderClient extends Client {
     #path: string = __filename.endsWith('.ts') ? 'src':'dist';
@@ -13,6 +14,7 @@ export class BenderClient extends Client {
     commands: Collection<string, commandOptions> = new Collection();
     configsManager: configsManager;
     whitelistManager: WhitelistManager;
+    antispamDataManager: antispamDataManager;
 
     constructor() {
         super({
@@ -37,6 +39,15 @@ export class BenderClient extends Client {
         this.whitelistManager = new WhitelistManager(this, this.db);
         this.whitelistManager.start();
     }
+    private setAntispamDataManager() {
+        this.antispamDataManager = new antispamDataManager(this, this.db);
+        this.antispamDataManager.start();
+    }
+    private setManagers() {
+        this.setConfigsManager();
+        this.setWhitelistManager();
+        this.setAntispamDataManager();
+    }
     private connectDb () {
         this.db = createConnection({
             user: process.env.DBU,
@@ -48,8 +59,7 @@ export class BenderClient extends Client {
         this.db.connect((error) => {
             if (error) throw error;
 
-            this.setConfigsManager();
-            this.setWhitelistManager();
+            this.setManagers();
         });
     }
     private loadCommands() {
