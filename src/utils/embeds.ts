@@ -54,6 +54,12 @@ export const setupEd = (user: User) => {
 export const gbanned = (user: User) => {
     return basic(user)
         .setTitle("⛔ GBan")
-        .setDescription(`Vous êtes Guilid-ban sur Bender Protect, et ce serveur n'accepte pas les membres GBannis.`)
+        .setDescription(`Vous êtes Guild-ban sur Bender Protect, et ce serveur n'accepte pas les membres GBannis.`)
+        .setColor('#ff0000')
+};
+export const gbanDisabled = (user: User) => {
+    return basic(user)
+        .setTitle("❌ GBan désactivé")
+        .setDescription(`Le système de GBan est désactivé sur ce serveur.\nUtilisez la commande </set:${user.client.application.commands.cache.find(x => x.name === 'set').id}>`)
         .setColor('#ff0000')
 };
