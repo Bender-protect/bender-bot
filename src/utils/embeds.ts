@@ -1,4 +1,5 @@
 import { BaseGuildVoiceChannel, EmbedBuilder, User } from "discord.js";
+import { antispam } from "../typings/antispam";
 import { configs, configTypes } from "../typings/configs";
 
 const basic = (user: User) => {
@@ -16,7 +17,7 @@ export const sqlError = (user: User) => {
 };
 export const noConfigured = (user: User) => {
     return basic(user)
-        .setTitle("❌ Pas de configuration")
+        .setTitle("⚠️ Pas de configuration")
         .setDescription(`Il n'y a pas de configuration sur ce serveur.\nUtilisez la commande \`/set intialiser\` pour initialiser le bot.`)
         .setColor('#ff0000')
 };
@@ -49,7 +50,7 @@ export const setupEd = (user: User) => {
     return basic(user)
         .setDescription(`Bender Protect est déjà configuré sur votre serveur`)
         .setColor('#ff0000')
-        .setTitle("❌ Déjà configuré")
+        .setTitle("⚠️ Déjà configuré")
 };
 export const gbanned = (user: User) => {
     return basic(user)
@@ -59,7 +60,39 @@ export const gbanned = (user: User) => {
 };
 export const gbanDisabled = (user: User) => {
     return basic(user)
-        .setTitle("❌ GBan désactivé")
+        .setTitle("⚠️ GBan désactivé")
         .setDescription(`Le système de GBan est désactivé sur ce serveur.\nUtilisez la commande </set:${user.client.application.commands.cache.find(x => x.name === 'set').id}>`)
         .setColor('#ff0000')
 };
+export const antispamDisabled = (user: User) => {
+    return basic(user)
+        .setTitle('⚠️ Antispam désactivé')
+        .setDescription(`L'antispam est désactivé sur votre serveur.\nActivez-le via la commande \`/set\``)
+        .setColor('#ff0000')
+};
+export const antispamConfigs = (user: User, configs: antispam) => {
+    const fields = [
+        {
+            name: 'Messages',
+            value: `${configs.count} messages`,
+            inline: true
+        },
+        {
+            name: 'Temps',
+            value: `${configs.time} secondes`,
+            inline: true
+        }
+    ];
+    if (Math.floor(Math.random() * 100) <= 100 / 3) fields.push(
+        {
+            name: '🚨 À noter',
+            value: `À noter que la limite est de ${configs.count} messages en ${configs.time} secondes`,
+            inline: false
+        }
+    );
+    return basic(user)
+        .setTitle('ℹ️ Antispam')
+        .setDescription(`L'antispam de <@${user.client.user.id}> a été configuré sur votre serveur`)
+        .setColor('#00ff00')
+        .setFields(fields)
+}
