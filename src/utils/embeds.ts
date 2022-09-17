@@ -1,6 +1,7 @@
 import { BaseGuildVoiceChannel, EmbedBuilder, User } from "discord.js";
 import { antispam } from "../typings/antispam";
 import { configs, configTypes } from "../typings/configs";
+import { sanctionCorres, sanctionNames, sanctions } from "../typings/sanctions";
 
 const basic = (user: User) => {
     return new EmbedBuilder()
@@ -97,3 +98,46 @@ export const antispamConfigs = (user: User, configs: antispam) => {
         .setFields(fields)
 };
 export const cancel = () => new EmbedBuilder({ title: '💡 Commande annulée' }).setColor('Yellow');
+
+export const sanctionConfigs = (user: User, configs: sanctions) => {
+    const embed = basic(user)
+        .setTitle("ℹ️ Configurations")
+        .setDescription(`Voici les configuration des sanctions du serveur`)
+        .setColor('#00ff00')
+
+    const calcTime = (n: number) => {
+        let m = 0;
+        let u = 0;
+        for (let i = 0; i < n; i++) {
+            n-1; 
+            u++;
+            if (u === 60) {
+                m++;
+                u=0;
+            };
+        };
+
+        let r = (u * 100) / 60;
+        return (m + r);
+    };
+    Object.keys(configs).filter(x => x !== 'guild_id').forEach((config, index) => {
+        const c = sanctionNames.find(x => x.value === config);
+        embed.addFields(
+            {
+                name: c.name,
+                value: `${sanctionCorres[(configs[config].type)]}${configs[config]?.time ? ` pendant ${calcTime(configs[config].time)} minutes`:''}`,
+                inline: true
+            }
+        );
+
+        if (index % 3 === 0 && index !== 0) {
+            embed.addFields({
+                name: '\u200b',
+                value: '\u200b',
+                inline: false
+            });
+        };
+    });
+
+    return embed;
+}

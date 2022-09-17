@@ -30,14 +30,14 @@ CREATE TABLE antispam (
 
 CREATE TABLE sanctions (
     guild_id VARCHAR(255) NOT NULL PRIMARY KEY,
-    channelCreate LONGTEXT NOT NULL DEFAULT '{type: "warn"}',
-    channelDelete LONGTEXT NOT NULL DEFAULT '{type: "warn"}',
-    channelUpdate LONGTEXT NOT NULL DEFAULT '{type: "warn"}',
-    roleCreate LONGTEXT NOT NULL DEFAULT '{type: "warn"}',
-    roleUpdate LONGTEXT NOT NULL DEFAULT '{type: "warn"}',
-    roleDelete LONGTEXT NOT NULL DEFAULT '{type: "warn"}',
-    spam LONGTEXT NOT NULL DEFAULT '{type: "mute", time: 300}',
-    ban LONGTEXT NOT NULL DEFAULT '{type: "warn"}'
+    channelCreate LONGTEXT NOT NULL DEFAULT '{"type": "warn"}',
+    channelDelete LONGTEXT NOT NULL DEFAULT '{"type": "warn"}',
+    channelUpdate LONGTEXT NOT NULL DEFAULT '{"type": "warn"}',
+    roleCreate LONGTEXT NOT NULL DEFAULT '{"type": "warn"}',
+    roleUpdate LONGTEXT NOT NULL DEFAULT '{"type": "warn"}',
+    roleDelete LONGTEXT NOT NULL DEFAULT '{"type": "warn"}',
+    spam LONGTEXT NOT NULL DEFAULT '{"type": "mute", "time": 300}',
+    ban LONGTEXT NOT NULL DEFAULT '{"type": "warn"}'
 );
 
 CREATE TABLE warns (

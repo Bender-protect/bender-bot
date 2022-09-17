@@ -3,7 +3,7 @@ import { Bender } from "../bender";
 import { Command } from "../structures/Command";
 import { sanction, sanctionNames, sanctions, sanctionsValues, sanctionCorres } from "../typings/sanctions";
 import { cancelButton, sanctionSelector } from "../utils/components";
-import { cancel, classic } from "../utils/embeds";
+import { cancel, classic, sanctionConfigs } from "../utils/embeds";
 
 export default new Command({
     name: 'sanction',
@@ -119,6 +119,9 @@ export default new Command({
                     }
                 });
             }
+        };
+        if (subcommand === 'configurations') {
+            interaction.reply({ embeds: [ sanctionConfigs(interaction.user, Bender.sanctionsManager.getAll(interaction.guild.id)) ] }).catch(() => {});
         }
     }
 })

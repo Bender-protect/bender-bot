@@ -95,6 +95,8 @@ export class sanctionsManager {
 
         this.#db.query(sql, (e) => {
             if (e) return console.log(e);
+
+            this.fillCache();
         });
     }
     private exists(guild_id: string) {
@@ -106,6 +108,9 @@ export class sanctionsManager {
 
             this.#cache.clear();
             req.forEach((r: sanctions) => {
+                Object.keys(r).filter(x => x !== 'guild_id').forEach((x) => {
+                    if (typeof r[x] !== 'object' && typeof r[x] === 'string') r[x] = JSON.parse(r[x]);
+                });
                 this.#cache.set(r.guild_id, r);
             });
         });
