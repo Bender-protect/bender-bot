@@ -9,7 +9,8 @@ export type configs = {
     roleUpdate_enable: boolean;
     gban: boolean;
     allowBan: boolean;
-    antispam: boolean
+    antispam: boolean;
+    guildUpdate_enable: boolean;
 };
 
 export const configTypes: { name: string, value: keyof configs }[] = [
@@ -22,5 +23,6 @@ export const configTypes: { name: string, value: keyof configs }[] = [
     { name: 'Modification de rôle', value: 'roleUpdate_enable' },
     { name: 'GBan', value: 'gban' },
     { name: 'Autorisation des bannissements', value: 'allowBan' },
-    { name: 'Antispam', value: 'antispam' }
+    { name: 'Antispam', value: 'antispam' },
+    { name: "Modification du serveur", value: 'guildUpdate_enable'}
 ];

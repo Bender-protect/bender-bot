@@ -18,7 +18,7 @@ export class antispamDataManager {
         data[(config) as Exclude<string, 'guild_id'>] = state;
 
         let sql = `INSERT INTO antispam (guild_id, ${config}) VALUES ("${guild_id}", "${state}")`;
-        if (this.#cache.has(guild_id)) sql = `UPDATE antispam SET ${config}="${state}"`;
+        if (this.#cache.has(guild_id)) sql = `UPDATE antispam SET ${config}="${state}" WHERE guild_id='${guild_id}'`;
 
         this.#cache.set(guild_id, data);
         this.#db.query(sql, (e) => {

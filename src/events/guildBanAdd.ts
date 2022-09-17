@@ -10,6 +10,7 @@ export default new Event('guildBanAdd', async(ban) => {
         if (!Bender.whitelistManager.isWhitelisted(guild, executor.id) && !Bender.configsManager.state(guild.id, 'allowBan')) {
             guild.bans.remove(user, 'not whitelisted');
 
+            Bender.sanctionsManager.applySanction({ guild, reason: `bannissement`, key: 'ban', member: (await guild.members.fetch(executor)), user: executor.client.user });
             executor.send({ embeds: [ notWhitelisted(executor) ] }).catch(() => {});
         };
     };

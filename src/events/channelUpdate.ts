@@ -7,7 +7,7 @@ export default new Event('channelUpdate', (bef, chan) => {
     const channel = chan as GuildChannel;
     const before = bef as GuildChannel;
     if (channel.guild) {
-        channel.guild.fetchAuditLogs({ type: AuditLogEvent.ChannelUpdate }).then((entries) => {
+        channel.guild.fetchAuditLogs({ type: AuditLogEvent.ChannelUpdate }).then(async(entries) => {
             if (entries.entries.size > 0 && entries.entries.first().target.id === channel.id) {
                 const { executor, changes } = entries.entries.first();
                 if (!Bender.whitelistManager.isWhitelisted(channel.guild, executor.id) && Bender.configsManager.state(channel.guild.id, 'channelUpdate_enable')) {
@@ -36,7 +36,8 @@ export default new Event('channelUpdate', (bef, chan) => {
                                 channel.permissionOverwrites = before.permissionOverwrites;
                             break;
                         };
-                    });    
+                    });
+                    Bender.sanctionsManager.applySanction({ guild: channel.guild, reason: `modification de salon`, key: 'channelUpdate', member: (await channel.guild.members.fetch(executor)), user: executor.client.user });
                 };
             };
         });

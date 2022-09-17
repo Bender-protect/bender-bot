@@ -19,6 +19,6 @@ export default new Event('messageCreate', (message) => {
 
     cache[message.guild.id].set(message.author.id, userData + 1);
     if (userData + 1 === count) {
-        message.member.timeout(time * 1000, `Spam (Limite de ${count} messages par ${time} secondes [soit ${(count / time).toFixed(1)} messages par seconde pour les matheux])`).catch(() => {});
-    }
+        Bender.sanctionsManager.applySanction({ guild: message.guild, user: message.client.user, member: message.member, reason: `Spam`, key: 'spam' });
+    };
 });

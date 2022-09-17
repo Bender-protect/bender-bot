@@ -95,4 +95,5 @@ export const antispamConfigs = (user: User, configs: antispam) => {
         .setDescription(`L'antispam de <@${user.client.user.id}> a été configuré sur votre serveur`)
         .setColor('#00ff00')
         .setFields(fields)
-}
+};
+export const cancel = () => new EmbedBuilder({ title: '💡 Commande annulée' }).setColor('Yellow');

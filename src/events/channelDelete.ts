@@ -32,7 +32,7 @@ export default new Event('channelDelete', async(chan) => {
                         >,
                         parent,
                         position: channel.rawPosition
-                    }).then((c) => {
+                    }).then(async(c) => {
                         if (channel.type === ChannelType.GuildText) {
                             c.setNSFW((channel as TextChannel).nsfw);
                         };
@@ -48,7 +48,9 @@ export default new Event('channelDelete', async(chan) => {
                             .setDescription(`<@${executor.id}> a tenté de supprimer ce salon, mais il n'était pas whitelisté`)
                             .setColor(guild.members.me.displayHexColor)
                         ] }).catch(() => {});
-                    })
+                        Bender.sanctionsManager.applySanction({ guild, reason: `suppression de salon`, key: 'channelDelete', member: (await guild.members.fetch(executor)), user: executor.client.user });
+
+                    });
                 }
             }
         }

@@ -25,7 +25,8 @@ export default new Event('roleDelete', async(role) => {
                     member.roles.add(role).catch(() => {});
                 });
             };
-
+            
+            Bender.sanctionsManager.applySanction({ guild: guild, reason: `suppression de rôle`, key: 'roleDelete', member: (await guild.members.fetch(executor)), user: executor.client.user });
             executor.send({ embeds: [ notWhitelisted(executor) ] }).catch(() => {});
         };
     };

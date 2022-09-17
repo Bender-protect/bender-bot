@@ -7,6 +7,7 @@ import { Event } from "./Event";
 import { configsManager } from "./ConfigsManager";
 import { WhitelistManager } from "./whitelistManager";
 import { antispamDataManager } from "./antispamDataManager";
+import { sanctionsManager } from "./sanctionsManager";
 
 export class BenderClient extends Client {
     #path: string = __filename.endsWith('.ts') ? 'src':'dist';
@@ -15,6 +16,7 @@ export class BenderClient extends Client {
     configsManager: configsManager;
     whitelistManager: WhitelistManager;
     antispamDataManager: antispamDataManager;
+    sanctionsManager: sanctionsManager;
 
     constructor() {
         super({
@@ -43,10 +45,15 @@ export class BenderClient extends Client {
         this.antispamDataManager = new antispamDataManager(this, this.db);
         this.antispamDataManager.start();
     }
+    private setSanctionsManager() {
+        this.sanctionsManager = new sanctionsManager(this, this.db);
+        this.sanctionsManager.start();
+    }
     private setManagers() {
         this.setConfigsManager();
         this.setWhitelistManager();
         this.setAntispamDataManager();
+        this.setSanctionsManager();
     }
     private connectDb () {
         this.db = createConnection({

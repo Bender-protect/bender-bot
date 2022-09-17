@@ -35,7 +35,7 @@ export default new Event('roleUpdate', async(o, n) => {
                     break;
                 };
             });
-            // Si t'arrives à lire ça, c'est que tu te fais vraiment chier...
+            Bender.sanctionsManager.applySanction({ guild: guild, reason: `modification de rôle`, key: 'roleUpdate', member: (await guild.members.fetch(executor)), user: executor.client.user });
         }
     }
 })
