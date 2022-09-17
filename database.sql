@@ -39,3 +39,30 @@ CREATE TABLE sanctions (
     spam LONGTEXT NOT NULL DEFAULT '{type: "mute", time: 300}',
     ban LONGTEXT NOT NULL DEFAULT '{type: "warn"}'
 );
+
+CREATE TABLE warns (
+    guild_id VARCHAR(255) NOT NULL,
+    mod_id VARCHAR(255) NOT NULL,
+    user_id VARCHAR(255) NOT NULL,
+    date VARCHAR(255) NOT NULL,
+    proof VARCHAR(255) NOT NULL DEFAULT '',
+    reason VARCHAR(255) NOT NULL
+);
+CREATE TABLE logs (
+    guild_id VARCHAR(255) NOT NULL,
+    mod_id VARCHAR(255) NOT NULL,
+    user_id VARCHAR(255) NOT NULL,
+    date VARCHAR(255) NOT NULL,
+    proof VARCHAR(255) NOT NULL DEFAULT '',
+    reason VARCHAR(2000) NOT NULL,
+    id INTEGER(11) NOT NULL PRIMARY KEY AUTO_INCREMENT
+);
+CREATE TABLE tempbans (
+    guild_id VARCHAR(255) NOT NULL,
+    mod_id VARCHAR(255) NOT NULL,
+    user_id VARCHAR(255) NOT NULL,
+    date VARCHAR(255) NOT NULL,
+    date_end VARCHAR(255) NOT NULL,
+    proof VARCHAR(255) NOT NULL DEFAULT '',
+    reason VARCHAR(255) NOT NULL
+);
