@@ -12,10 +12,15 @@ export default new Command({
         const subcommand = args.getSubcommand();
 
         if (subcommand === 'initialiser') {
-            if (interaction.client.configsManager.has(interaction.guild.id) && Object.keys(interaction.client.sanctionsManager.getAll(interaction.guild.id)).length > 0) return interaction.reply({ embeds: [ setupEd(interaction.user) ] }).catch(() => {});
+            if (
+                interaction.client.configsManager.has(interaction.guild.id) &&
+                Object.keys(interaction.client.sanctionsManager.getAll(interaction.guild.id)).length > 0 &&
+                Object.keys(interaction.client.antispamDataManager.get(interaction.guild.id)).length > 0
+            ) return interaction.reply({ embeds: [ setupEd(interaction.user) ] }).catch(() => {});
 
             interaction.client.configsManager.setup(interaction.guild.id);
             interaction.client.sanctionsManager.setup(interaction.guild.id);
+            interaction.client.antispamDataManager.set(interaction.guild.id, 'count', 6);
             interaction.reply({ embeds: [ setup(interaction.user) ] }).catch(() => {});
         } else {
             const option = args.getString('option', true) as keyof configs;

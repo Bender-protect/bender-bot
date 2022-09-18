@@ -3,6 +3,7 @@ import { classic } from "../utils/embeds";
 import ms from 'ms';
 import { Bender } from "../bender";
 import { sanction, sanctionNames, sanctions } from "../typings/sanctions";
+import { calcTime } from "../utils/functions";
 
 export default new Event('interactionCreate', (interaction) => {
     if (interaction.isModalSubmit()) {
@@ -40,7 +41,7 @@ export default new Event('interactionCreate', (interaction) => {
                     },
                     {
                         name: 'Temps',
-                        value: `${interaction.fields.getTextInputValue('sanction-select-time')}`,
+                        value: calcTime(Math.floor(time / 1000)),
                         inline: true
                     }
                 )

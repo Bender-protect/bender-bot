@@ -2,6 +2,7 @@ import { BaseGuildVoiceChannel, EmbedBuilder, User } from "discord.js";
 import { antispam } from "../typings/antispam";
 import { configs, configTypes } from "../typings/configs";
 import { sanctionCorres, sanctionNames, sanctions } from "../typings/sanctions";
+import { calcTime } from "./functions";
 
 const basic = (user: User) => {
     return new EmbedBuilder()
@@ -105,27 +106,13 @@ export const sanctionConfigs = (user: User, configs: sanctions) => {
         .setDescription(`Voici les configuration des sanctions du serveur`)
         .setColor('#00ff00')
 
-    const calcTime = (n: number) => {
-        let m = 0;
-        let u = 0;
-        for (let i = 0; i < n; i++) {
-            n-1; 
-            u++;
-            if (u === 60) {
-                m++;
-                u=0;
-            };
-        };
-
-        let r = (u * 100) / 60;
-        return (m + r);
-    };
+    
     Object.keys(configs).filter(x => x !== 'guild_id').forEach((config, index) => {
         const c = sanctionNames.find(x => x.value === config);
         embed.addFields(
             {
                 name: c.name,
-                value: `${sanctionCorres[(configs[config].type)]}${configs[config]?.time ? ` pendant ${calcTime(configs[config].time)} minutes`:''}`,
+                value: `${sanctionCorres[(configs[config].type)]}${configs[config]?.time ? ` pendant ${calcTime(configs[config].time)}`:''}`,
                 inline: true
             }
         );
