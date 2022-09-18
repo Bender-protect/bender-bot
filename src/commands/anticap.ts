@@ -64,7 +64,7 @@ export default new Command({
 
                 const rate = args.getNumber('pourcentage', true);
                 let sql = `INSERT INTO anticap (guild_id, rate) VALUES ('${interaction.guild.id}', '${rate}')`;
-                if (req.length === 0) sql = `UPDATE anticap SET rate='${rate}' WHERE guild_id='${interaction.guild.id}'`;
+                if (req.length > 0) sql = `UPDATE anticap SET rate='${rate}' WHERE guild_id='${interaction.guild.id}'`;
 
                 Bender.db.query(sql, (e) => {
                     if (e) {
