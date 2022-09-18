@@ -15,7 +15,8 @@ CREATE TABLE configs (
     allowBan TINYINT(1) NOT NULL DEFAULT '1',
     antispam TINYINT(1) NOT NULL DEFAULT "1",
     gban TINYINT(1) NOT NULL DEFAULT '1',
-    guildUpdate_enable TINYINT(1) NOT NULL DEFAULT '1'
+    guildUpdate_enable TINYINT(1) NOT NULL DEFAULT '1',
+    anticap TINYINT(1) NOT NULL DEFAULT '1'
 );
 
 CREATE TABLE gbans (
@@ -37,7 +38,12 @@ CREATE TABLE sanctions (
     roleUpdate LONGTEXT NOT NULL DEFAULT '{"type": "warn"}',
     roleDelete LONGTEXT NOT NULL DEFAULT '{"type": "warn"}',
     spam LONGTEXT NOT NULL DEFAULT '{"type": "mute", "time": 300}',
-    ban LONGTEXT NOT NULL DEFAULT '{"type": "warn"}'
+    ban LONGTEXT NOT NULL DEFAULT '{"type": "warn"}',
+    anticap LONGTEXT NOT NULL DEFAULT '{"type": "mute", "time": 300}'
+);
+CREATE TABLE anticap (
+    guild_id VARCHAR(255) NOT NULL PRIMARY KEY,
+    rate INTEGER(5) NOT NULL DEFAULT '25'
 );
 
 CREATE TABLE warns (

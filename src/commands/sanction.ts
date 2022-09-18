@@ -45,7 +45,8 @@ export default new Command({
                 roleUpdate: 'roleUpdate_enable',
                 ban: 'allowBan',
                 spam: 'antispam',
-                guildUpdate: 'guildUpdate_enable'
+                guildUpdate: 'guildUpdate_enable',
+                anticap: 'anticap'
             };
 
             if (!Bender.configsManager.state(interaction.guild.id, cores[param])) return interaction.reply({ embeds: [ classic(interaction.user)

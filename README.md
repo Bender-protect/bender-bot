@@ -12,7 +12,6 @@ Les fonctionnalités de Bender Protect consistent en :
 
 Certaines fonctionnalités ne sont pas encore terminées comme :
 * L'anti modification du serveur
-* anticap
 * comptes trop jeunes
 * comptabilité avec Draver
 

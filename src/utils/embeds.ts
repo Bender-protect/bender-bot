@@ -140,4 +140,30 @@ export const sanctionConfigs = (user: User, configs: sanctions) => {
     });
 
     return embed;
-}
+};
+export const anticapDisabled = (user: User) => {
+    return basic(user)
+        .setTitle("❌ Anti-majuscules désactivé")
+        .setDescription(`L'anti-majuscules est désactivé sur ce serveur.\nUtilisez la commande \`/set\` pour l'activer`)
+        .setColor('#ff0000')
+};
+export const anticapConfig = (user: User, percentage: number) => {
+    const fields = [
+        {
+            name: 'Pourcentage autorisé',
+            value: `${percentage}% de majuscules sont autorisées dans un message`,
+            inline: true
+        }
+    ];
+
+    if (Math.floor(Math.random() * 10) === 5) fields.push({
+        name: '🚨 Configuration',
+        value: `Vous pouvez configurer l'anti majuscules avec la commande \`/anticap\``,
+        inline: false
+    });
+    return basic(user)
+        .setTitle("ℹ️ Configurations de l'anti-majuscules")
+        .setDescription(`L'anti majuscules est configuré sur votre serveur.`)
+        .setColor('#00ff00')
+        .setFields(fields)
+};

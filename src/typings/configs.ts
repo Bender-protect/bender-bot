@@ -11,6 +11,7 @@ export type configs = {
     allowBan: boolean;
     antispam: boolean;
     guildUpdate_enable: boolean;
+    anticap: boolean;
 };
 
 export const configTypes: { name: string, value: keyof configs }[] = [
@@ -24,5 +25,6 @@ export const configTypes: { name: string, value: keyof configs }[] = [
     { name: 'GBan', value: 'gban' },
     { name: 'Autorisation des bannissements', value: 'allowBan' },
     { name: 'Antispam', value: 'antispam' },
-    { name: "Modification du serveur", value: 'guildUpdate_enable'}
+    { name: "Modification du serveur", value: 'guildUpdate_enable' },
+    { name: 'Anti lettres majuscules', value: 'anticap' }
 ];

@@ -2,7 +2,7 @@ import { Event } from "../structures/Event";
 import { classic } from "../utils/embeds";
 import ms from 'ms';
 import { Bender } from "../bender";
-import { sanction, sanctionCorres, sanctionNames, sanctions } from "../typings/sanctions";
+import { sanction, sanctionNames, sanctions } from "../typings/sanctions";
 
 export default new Event('interactionCreate', (interaction) => {
     if (interaction.isModalSubmit()) {

@@ -2,7 +2,7 @@ import { Guild, GuildMember, User } from "discord.js";
 import { database } from "../typings/Database";
 import { sanction, sanctions } from "../typings/sanctions";
 import { classic } from "../utils/embeds";
-import { addWarn, tempBan } from "../utils/functions";
+import { addLog, addWarn, tempBan } from "../utils/functions";
 import { BenderClient } from "./Bender";
 
 export class sanctionsManager {
@@ -88,6 +88,8 @@ export class sanctionsManager {
                 tempBan({ guild_id: guild.id, user_id: member.id, mod_id: user.id, reason: `${reason} (automodération)`, proof: '', date: Date.now(), date_end: Date.now() + (sanction.time * 1000) });
             break;
         };
+
+        addLog({ guild_id: guild.id, user_id: member.id, mod_id: user.id, proof: '', reason: `${reason} (automodération)`, date: Date.now() });
     }
     public set(guild_id: string, key: keyof sanctions, value: sanction) {
         let sql = `INSERT INTO sanctions (guild_id, ${key}) VALUES ("${guild_id}", '${JSON.stringify(value)}')`;
