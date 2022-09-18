@@ -22,6 +22,7 @@ export class sanctionsManager {
 
         this.#db.query(`INSERT INTO sanctions (guild_id) VALUES ("${guild_id}")`, (e) => {
             if (e) console.log(e);
+            this.fillCache();
         });
     }
     public getAll(guild_id: string) {
