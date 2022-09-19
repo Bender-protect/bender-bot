@@ -1,4 +1,4 @@
-import { BaseGuildVoiceChannel, EmbedBuilder, User } from "discord.js";
+import { EmbedBuilder, User } from "discord.js";
 import { antispam } from "../typings/antispam";
 import { configs, configTypes } from "../typings/configs";
 import { sanctionCorres, sanctionNames, sanctions } from "../typings/sanctions";
@@ -153,4 +153,11 @@ export const anticapConfig = (user: User, percentage: number) => {
         .setDescription(`L'anti majuscules est configuré sur votre serveur.`)
         .setColor('#00ff00')
         .setFields(fields)
+};
+export const perms = {
+    client: (user: User) => basic(user).setTitle("🚫 Permission invalides").setDescription(`Je n'ai pas les permissions suffisantes pour exécuter cette action.\n💡\n> Vérifiez mes permissions de rôle\n> Vérifiez la position de mon rôle dans la hiéararchie des rôles`).setColor('#ff0000'),
+    userPerms: (user: User) => basic(user).setTitle('🚫 Permissions insuffisantes').setDescription(`Vous n'avez pas la permission de faire cette action`).setColor('#ff0000'),
+    memberPosition: (user: User, state: 'vous' | 'moi') => basic(user).setTitle('🚫 Position invalide').setDescription(`Cet utilisateur est **supérieur** ou **égal** à ${state}`).setColor('#ff0000'),
+    owner: (user: User, owner: User) => basic(user).setTitle('🚫 Propriétaire du serveur').setDescription(`<@${owner.id}> est le propriétaire du serveur.\nVous ne pouvez pas exécuter cette action sur le propriétaire du serveur`).setColor('#ff0000'),
+    selfUser: (user: User) => basic(user).setTitle('🚫 Auto-ciblage').setDescription(`Vous`)
 };
