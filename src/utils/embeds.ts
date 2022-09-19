@@ -160,5 +160,5 @@ export const perms = {
     memberPosition: (user: User, state: 'vous' | 'moi') => basic(user).setTitle('🚫 Position invalide').setDescription(`Cet utilisateur est **supérieur** ou **égal** à ${state}`).setColor('#ff0000'),
     owner: (user: User, owner: User) => basic(user).setTitle('🚫 Propriétaire du serveur').setDescription(`<@${owner.id}> est le propriétaire du serveur.\nVous ne pouvez pas exécuter cette action sur le propriétaire du serveur`).setColor('#ff0000'),
     selfUser: (user: User) => basic(user).setTitle('🚫 Auto-ciblage').setDescription(`Vous ne pouvez pas faire ça sur vous même`).setColor('#ff0000'),
-    botot: (user: User) => basic(user).setTitle('🚫 Bot').setDescription(`Je ne peux pas faire cette action sur un bot`).setColor('#ff0000')
+    bot: (user: User) => basic(user).setTitle('🚫 Bot').setDescription(`Je ne peux pas faire cette action sur un bot`).setColor('#ff0000')
 };

@@ -1,6 +1,9 @@
+import { GuildMember, Options } from "discord.js";
 import { Bender } from "../bender";
+import { BenderInteraction } from "../typings/commandType";
 import { tempban } from "../typings/tempbans";
 import { warn } from "../typings/warns";
+import { perms } from "./embeds";
 
 export const addLog = (options: warn) => {
     Bender.db.query(`INSERT INTO logs (guild_id, mod_id, user_id, date, reason, proof) VALUES ("${options.guild_id}", "${options.mod_id}", "${options.user_id}", "${options.date}", "${options.reason}", "${options.proof ? options.proof : ''}")`, (e) => {
@@ -54,4 +57,28 @@ export const calcTime = (n: number) => {
     });
 
     return time.join(', ');
+};
+
+type checkPermsOptions = {
+    mod: GuildMember;
+    member: GuildMember;
+    interaction: BenderInteraction;
+    checkSelf?: boolean;
+    checkOwner?: boolean;
+    checkBot: boolean;
+};
+
+export const checkPerms = ({  member, interaction, mod, ...options }: checkPermsOptions) => {
+    const reply = (params) => {
+        if (interaction.replied) {
+            interaction.editReply(Object.assign(params, { components: [], files: [], attachments: [] })).catch(() => {});
+        } else {
+            interaction.reply(params).catch(() => {});
+        };
+    };
+
+    if (!member.moderatable) {
+        reply(perms.client(mod.user))
+        return false;
+    };
 }
