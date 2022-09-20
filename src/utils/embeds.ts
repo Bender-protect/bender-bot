@@ -162,3 +162,15 @@ export const perms = {
     selfUser: (user: User) => basic(user).setTitle('🚫 Auto-ciblage').setDescription(`Vous ne pouvez pas faire ça sur vous même`).setColor('#ff0000'),
     bot: (user: User) => basic(user).setTitle('🚫 Bot').setDescription(`Je ne peux pas faire cette action sur un bot`).setColor('#ff0000')
 };
+export const interactionNotAllowed = (user: User) => {
+    return basic(user)
+        .setTitle("🚫 Interaction refusée")
+        .setDescription(`Vous ne pouvez pas interagir avec cette interaction`)
+        .setColor('#ff0000')
+};
+export const paginationSelect = (user: User) => {
+    return basic(user)
+        .setTitle("❓ Page")
+        .setDescription(`Quelle page souhaitez-vous consulter ?`)
+        .setColor('Yellow')
+}
