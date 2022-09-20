@@ -3,8 +3,8 @@ import { Bender } from "../bender";
 import { BenderInteraction } from "../typings/commandType";
 import { tempban } from "../typings/tempbans";
 import { warn } from "../typings/warns";
-import { waitForInteraction } from "../waitFor";
-import { cancel, interactionNotAllowed, paginationSelect, perms } from "./embeds";
+import { waitForInteraction } from "./waitFor";
+import { cancel, interactionNotAllowed, paginationSelect, paginatorClosed, perms } from "./embeds";
 
 export const addLog = (options: warn) => {
     Bender.db.query(`INSERT INTO logs (guild_id, mod_id, user_id, date, reason, proof) VALUES ("${options.guild_id}", "${options.mod_id}", "${options.user_id}", "${options.date}", "${options.reason}", "${options.proof ? options.proof : ''}")`, (e) => {
@@ -140,7 +140,7 @@ export const pagination = async({ paginatorName, interaction, user, ...opts }: {
     const msg = await reply({ embeds: [ embeds[index] ], components: [ components() ] });
     const collector = msg.createMessageComponentCollector({ time: 300000, idle: 120000 });
 
-    collector.on('collect', async({ customId, deleteReply, reply, ...i }) => {
+    collector.on('collect', async({ customId, deleteReply, deferUpdate, reply, ...i }) => {
         if (i.user.id !== user.id) {
             reply({ embeds: [ interactionNotAllowed(i.user) ], ephemeral: true }).catch(() => {});
             return;
@@ -156,7 +156,7 @@ export const pagination = async({ paginatorName, interaction, user, ...opts }: {
             embed = embed[index];
         };
         if (customId === 'close') {
-            i.message.edit({ components: [], embeds: [ cancel() ] }).catch(() => {});
+            i.message.edit({ components: [], embeds: [ paginatorClosed(user, paginatorName) ] }).catch(() => {});
             return;
         };
         if (customId === 'select') {
@@ -176,8 +176,43 @@ export const pagination = async({ paginatorName, interaction, user, ...opts }: {
 
                 embed = embeds[parseInt(choice.values[0])];
             } else {
-                
-            }
+                let rows = [new SelectMenuBuilder()] as unknown;
+
+                let rowIndex = 0;
+                for (let i = 0; i < embeds.length; i++) {
+                    const row = rows[rowIndex];
+                    row.addOptions(
+                        {
+                            label: `Page ${i}`,
+                            value: i.toString(),
+                            description: `Aller à la page ${i}`
+                        }
+                    );
+
+                    if (row.options.length === 24) {
+                        rowIndex++;
+                        (rows as SelectMenuBuilder[]).push(new SelectMenuBuilder());
+                    };
+                };
+
+                rows = (rows as []).map((builder: SelectMenuBuilder) => new ActionRowBuilder({ components: [ builder ] }) as ActionRowBuilder<SelectMenuBuilder>);
+
+                const iReply = await reply({ fetchReply: true, ephemeral: true, embeds: [ paginationSelect(user) ], components: (rows as ActionRowBuilder<SelectMenuBuilder>[]) }).catch(() => {}) as Message<true>;
+                const choice = await waitForInteraction({ component_type: ComponentType.SelectMenu, message: iReply, user }).catch(() => {});
+
+                deleteReply().catch(() => {});
+                if (!choice) return;
+
+                index = parseInt(choice.values[0]);
+                embed = embeds[parseInt(choice.values[0])];
+            };
         };
-    })
+
+       deferUpdate().catch(() => {});
+       i.message.edit({ embeds: [ embed ], components: [ components() ] }).catch(() => {});
+    });
+
+    collector.on('end', () => {
+        msg.edit({ components: [ components(true) ] }).catch(() => {});
+    });
 };

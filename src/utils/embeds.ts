@@ -173,4 +173,13 @@ export const paginationSelect = (user: User) => {
         .setTitle("❓ Page")
         .setDescription(`Quelle page souhaitez-vous consulter ?`)
         .setColor('Yellow')
-}
+};
+export const paginatorClosed = (user: User, name: string) => basic(user)
+    .setTitle("🚨 Paginateur fermé")
+    .setDescription(`Vous avez fermé le paginateur \`${name}\``)
+    .setColor('#00ff00');
+
+export const invalidProofType = (user: User) => basic(user)
+    .setTitle("❌ Preuve invalide")
+    .setDescription(`Les preuves ne sont acceptées que sous image en fichier \`jpg\` ou \`png\``)
+    .setColor('#ff0000')
