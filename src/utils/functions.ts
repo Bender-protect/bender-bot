@@ -1,4 +1,4 @@
-import { GuildMember, Options } from "discord.js";
+import { ButtonBuilder, ButtonStyle, Embed, GuildMember, User, ActionRowBuilder } from "discord.js";
 import { Bender } from "../bender";
 import { BenderInteraction } from "../typings/commandType";
 import { tempban } from "../typings/tempbans";
@@ -106,4 +106,28 @@ export const checkPerms = ({  member, interaction, mod, ...options }: checkPerms
         return false;
     };
     return true;
+};
+export const pagination = async({ embeds, paginatorName, interaction, user }: { embeds: Embed[], paginatorName: string, user: User, interaction: BenderInteraction }) => {
+    const reply = async(params) => {
+        if (interaction.replied) {
+            await interaction.editReply(params).catch(() => {});
+            return await interaction.fetchReply();
+        } else {
+            return await interaction.reply(Object.assign(params, { fetchReply: true })).catch(() => {});
+        };
+    };
+    let index = 0;
+    const components = () => {
+        const components: ButtonBuilder[] = [
+            new ButtonBuilder().setEmoji('⬅️').setCustomId('previous').setStyle(ButtonStyle.Secondary),
+            new ButtonBuilder().setEmoji('🔢').setCustomId('select').setStyle(ButtonStyle.Primary),
+            new ButtonBuilder().setEmoji('➡️').setCustomId('next').setStyle(ButtonStyle.Secondary),
+            new ButtonBuilder().setEmoji('❌').setCustomId('close').setStyle(ButtonStyle.Danger)
+        ];
+
+        return new ActionRowBuilder({ components }) as ActionRowBuilder<ButtonBuilder>;
+    };
+
+    const msg = await reply({ embeds: [ embeds[index] ], components: [ components() ] });
+    
 };
