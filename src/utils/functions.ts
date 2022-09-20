@@ -66,6 +66,7 @@ type checkPermsOptions = {
     checkSelf?: boolean;
     checkOwner?: boolean;
     checkBot: boolean;
+    checkPosition?: boolean;
 };
 
 export const checkPerms = ({  member, interaction, mod, ...options }: checkPermsOptions) => {
@@ -78,7 +79,31 @@ export const checkPerms = ({  member, interaction, mod, ...options }: checkPerms
     };
 
     if (!member.moderatable) {
-        reply(perms.client(mod.user))
+        reply({ embeds: [ perms.client(mod.user) ] });
         return false;
     };
-}
+    if (!options.checkPosition === false) {
+        const { position } = member.roles.highest;
+        if (position >= mod.roles.highest.position && mod.id !== mod.guild.ownerId) {
+            reply({ embeds: [perms.memberPosition(mod.user, 'vous') ] });
+            return false;
+        };
+        if (position >= mod.guild.members.me.roles.highest.position) {
+            reply({ embeds: [ perms.memberPosition(mod.user, 'vous') ] });
+            return false;
+        };
+    };
+    if (options.checkBot === true && member.user.bot) {
+        reply({ embeds: [ perms.bot(mod.user) ] });
+        return false;
+    };
+    if (options.checkOwner === true && member.user.id === member.guild.ownerId) {
+        reply({ embeds: [ perms.owner(mod.user, member.user) ] });
+        return false;
+    };
+    if (options.checkSelf === true && mod.id === member.id) {
+        reply({ embeds: [ perms.selfUser(mod.user) ] });
+        return false;
+    };
+    return true;
+};
