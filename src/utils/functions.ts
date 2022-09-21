@@ -130,7 +130,7 @@ export const pagination = async({ paginatorName, interaction, user, ...opts }: {
     });
 
     const reply = async(params) => {
-        if (interaction.replied) {
+        if (interaction.replied || interaction.deferred) {
             await interaction.editReply(params).catch(() => {});
         } else {
             await interaction.reply(params).catch(() => {});

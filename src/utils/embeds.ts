@@ -264,3 +264,15 @@ export const paginationEmbeds = {
     askPage: (user: User) => basic(user).setTitle('❓ Page').setDescription(`Quelle page souhaitez-vous voir ?\n\nRépondez dans le salon par le numéro de la page que vous voulez voir.\n💡\n> Répondez par \`cancel\` pour annuler la sélection`).setColor('Yellow'),
     invalidPage: (user: User) => basic(user).setTitle('❌ Page invalide').setDescription(`Cette page n'existe pas`).setColor('#ff0000')
 };
+export const unexistingLog = (user: User) => {
+    return basic(user)
+        .setTitle('❌ Log inexistant')
+        .setDescription(`Ce log n'existe pas`)
+        .setColor('#ff0000')
+};
+export const noLogs = (user: User) => {
+    return basic(user)
+        .setTitle('❌ Pas de logs')
+        .setDescription(`Tout est calme... Il n'y a pas encore de logs sur ce serveur`)
+        .setColor('#ff0000')
+};
