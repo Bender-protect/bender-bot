@@ -1,4 +1,4 @@
-import { ApplicationCommand, ApplicationCommandDataResolvable, Client, ClientEvents, Collection, TeamMemberMembershipState } from "discord.js";
+import { ApplicationCommand, ApplicationCommandDataResolvable, Client, ClientEvents, Collection, IntentsBitField, TeamMemberMembershipState } from "discord.js";
 import { commandOptions } from "../typings/commandType";
 import { database } from "../typings/Database";
 import { createConnection } from 'mysql';
@@ -20,8 +20,9 @@ export class BenderClient extends Client {
     usefullCommands: ApplicationCommand[] = [];
 
     constructor() {
+        const intents = IntentsBitField.Flags;
         super({
-            intents: [32767]
+            intents: [ intents.GuildBans, intents.GuildMembers, intents.Guilds, intents.MessageContent, intents.GuildMessages ]
         });
     }
     public start() {
