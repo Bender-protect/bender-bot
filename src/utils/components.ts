@@ -43,4 +43,8 @@ export const noBtn = new ButtonBuilder()
     .setCustomId('no')
     .setLabel('Non')
     .setStyle(ButtonStyle.Danger);
-export const yesNoRow = new ActionRowBuilder({ components: [ yesBtn, noBtn ] }) as ActionRowBuilder<ButtonBuilder>
+export const yesNoRow = new ActionRowBuilder({ components: [ yesBtn, noBtn ] }) as ActionRowBuilder<ButtonBuilder>;
+export const proofDownload = new ButtonBuilder()
+    .setStyle(ButtonStyle.Primary)
+    .setLabel('Télécharger la preuve')
+    .setCustomId('proof-download');

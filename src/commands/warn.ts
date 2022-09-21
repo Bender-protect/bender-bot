@@ -2,7 +2,7 @@ import { ActionRowBuilder, ApplicationCommandOption, ApplicationCommandOptionTyp
 import { Bender } from "../bender";
 import { Command } from "../structures/Command";
 import { warn, warns } from "../typings/warns";
-import { noBtn, yesBtn } from "../utils/components";
+import { noBtn, proofDownload, yesBtn } from "../utils/components";
 import { cancel, classic, deleteWarn, deleteWarnConfirm, invalidProofType, reasonTooLong, resetWarnConfirm, sqlError, unexistingWarn, warnReset } from "../utils/embeds";
 import { addLog, addWarn, checkPerms, pagination } from "../utils/functions";
 import { waitForInteraction } from "../utils/waitFor";
@@ -187,13 +187,7 @@ export default new Command({
                     replyData.embeds = [ embed ];
 
                     replyData.components = [
-                        new ActionRowBuilder()
-                            .setComponents(
-                                new ButtonBuilder()
-                                    .setStyle(ButtonStyle.Primary)
-                                    .setLabel('Télécharger la preuve')
-                                    .setCustomId('proof-download')
-                            ) as ActionRowBuilder<ButtonBuilder> ];
+                        new ActionRowBuilder().setComponents(proofDownload) as ActionRowBuilder<ButtonBuilder> ];
                 };
 
                 interaction.editReply(replyData).catch(() => {});
