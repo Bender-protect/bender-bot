@@ -1,4 +1,5 @@
 import { EmbedBuilder, User } from "discord.js";
+import { BenderClient } from "../structures/Bender";
 import { antispam } from "../typings/antispam";
 import { configs, configTypes } from "../typings/configs";
 import { sanctionCorres, sanctionNames, sanctions } from "../typings/sanctions";
@@ -221,3 +222,22 @@ export const deleteWarn = ({ user, u, id }: { user: User, u: User, id: number })
         .setDescription(`L'avertissement d'identifiant \`${id.toString()}\` de <@${u.id}> a été supprimé`)
         .setColor('#00ff00')
 };
+export const guildCreateMsg = (client: BenderClient) => {
+    return basic(client.user)
+        .setTitle('💡 Bender Protect')
+        .setDescription(`Bonjour, je suis Bender Protect, un bot de protection pour votre serveur open source.\n> Merci de m'avoir ajouté ❤️\n\nUtilisez la commande \`/set initialiser\` pour faire les premières configurations de Bender Protect.\nEnsuite vous pouvez utiliser ma commande \`/help\` pour obtenir la liste des commandes.\n\nSi vous rencontrez tout problème, contactez mon [support](${process.env.support})`)
+        .setColor('Yellow')
+        .setFields(
+            {
+                name: 'Liens',
+                value: `[Support](${process.env.support})\n[Code source](${process.env.github})`,
+                inline: true
+            },
+            {
+                name: 'Commande utiles',
+                value: client.usefullCommands.map((cmd) => `</${cmd.name}:${cmd.id}>`).join(' '),
+                inline: true
+            }
+        )
+        .setThumbnail('attachment://logo.png')
+}

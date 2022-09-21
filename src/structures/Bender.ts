@@ -1,4 +1,4 @@
-import { ApplicationCommandDataResolvable, Client, ClientEvents, Collection, TeamMemberMembershipState } from "discord.js";
+import { ApplicationCommand, ApplicationCommandDataResolvable, Client, ClientEvents, Collection, TeamMemberMembershipState } from "discord.js";
 import { commandOptions } from "../typings/commandType";
 import { database } from "../typings/Database";
 import { createConnection } from 'mysql';
@@ -17,6 +17,7 @@ export class BenderClient extends Client {
     whitelistManager: WhitelistManager;
     antispamDataManager: antispamDataManager;
     sanctionsManager: sanctionsManager;
+    usefullCommands: ApplicationCommand[] = [];
 
     constructor() {
         super({
@@ -79,7 +80,9 @@ export class BenderClient extends Client {
         });
 
         this.on('ready', () => {
-            this.application.commands.set(cmds);
+            this.application.commands.set(cmds).then((cmds) => {
+                this.usefullCommands = cmds.filter(x => ['help', 'set', 'sanction'].includes(x.name)).toJSON();
+            });
         });
     }
     private loadEvents() {
