@@ -259,4 +259,8 @@ export const banConfirm = (user: User, u: User) => {
         .setTitle('❓ Bannissement')
         .setDescription(`Voulez-vous bannir <@${u.id}> ?`)
         .setColor('#ff0000')
-}
+};
+export const paginationEmbeds = {
+    askPage: (user: User) => basic(user).setTitle('❓ Page').setDescription(`Quelle page souhaitez-vous voir ?\n\nRépondez dans le salon par le numéro de la page que vous voulez voir.\n💡\n> Répondez par \`cancel\` pour annuler la sélection`).setColor('Yellow'),
+    invalidPage: (user: User) => basic(user).setTitle('❌ Page invalide').setDescription(`Cette page n'existe pas`).setColor('#ff0000')
+};
