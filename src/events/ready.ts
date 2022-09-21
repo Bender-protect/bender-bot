@@ -21,4 +21,6 @@ export default new Event('ready', () => {
             });
         });
     }, 15000);
+
+    console.log('Ready !');
 });
