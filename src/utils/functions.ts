@@ -1,10 +1,10 @@
-import { ButtonBuilder, ButtonStyle, Embed, GuildMember, User, ActionRowBuilder, Message, EmbedBuilder, SelectMenuBuilder, ComponentType } from "discord.js";
+import { ButtonBuilder, ButtonStyle, GuildMember, User, ActionRowBuilder, Message, EmbedBuilder, SelectMenuBuilder, ComponentType, Collection } from "discord.js";
 import { Bender } from "../bender";
 import { BenderInteraction } from "../typings/commandType";
 import { tempban } from "../typings/tempbans";
 import { warn } from "../typings/warns";
 import { waitForInteraction } from "./waitFor";
-import { cancel, interactionNotAllowed, paginationSelect, paginatorClosed, perms } from "./embeds";
+import { cancel, interactionNotAllowed, paginationEmbeds, paginationSelect, paginatorClosed, perms } from "./embeds";
 import { log } from "../typings/log";
 
 export const addLog = (options: log) => {
@@ -139,11 +139,11 @@ export const pagination = async({ paginatorName, interaction, user, ...opts }: {
         return await interaction.fetchReply() as Message<true>;
     };
     let index = 0;
-    const components = (allDisabled?: boolean) => {
-        const disabled = allDisabled ?? false;
+    const components = ({ allDisabled = false, selectDisabled = false }: { allDisabled?: boolean, selectDisabled?: boolean }) => {
+        const disabled = allDisabled;
         const components: ButtonBuilder[] = [
             new ButtonBuilder().setEmoji('⬅️').setCustomId('previous').setStyle(ButtonStyle.Secondary).setDisabled(index === 0),
-            new ButtonBuilder().setEmoji('🔢').setCustomId('select').setStyle(ButtonStyle.Primary),
+            new ButtonBuilder().setEmoji('🔢').setCustomId('select').setStyle(ButtonStyle.Primary).setDisabled(selectDisabled),
             new ButtonBuilder().setEmoji('➡️').setCustomId('next').setStyle(ButtonStyle.Secondary).setDisabled(index === embeds.length - 1),
             new ButtonBuilder().setEmoji('❌').setCustomId('close').setStyle(ButtonStyle.Danger)
         ];
@@ -152,82 +152,71 @@ export const pagination = async({ paginatorName, interaction, user, ...opts }: {
         return new ActionRowBuilder({ components }) as ActionRowBuilder<ButtonBuilder>;
     };
 
-    const msg = await reply({ embeds: [ embeds[index] ], components: [ components() ] });
+    const msg = await reply({ embeds: [ embeds[index] ], components: [ components({}) ] });
     const collector = msg.createMessageComponentCollector({ time: 300000, idle: 120000 });
 
-    collector.on('collect', async({ customId, deleteReply, deferUpdate, reply, ...i }) => {
+    collector.on('collect', async(i) => {
         if (i.user.id !== user.id) {
             reply({ embeds: [ interactionNotAllowed(i.user) ], ephemeral: true }).catch(() => {});
             return;
         };
 
         let embed: EmbedBuilder;
-        if (customId === 'next') {
+        if (i.customId === 'next') {
             index++
-            embed = embed[index]
+            embed = embeds[index]
         };
-        if (customId === 'previous') {
+        if (i.customId === 'previous') {
             index--;
-            embed = embed[index];
+            embed = embeds[index];
         };
-        if (customId === 'close') {
+        if (i.customId === 'close') {
             i.message.edit({ components: [], embeds: [ paginatorClosed(user, paginatorName) ] }).catch(() => {});
             return;
         };
-        if (customId === 'select') {
-            if (embeds.length < 25) {
-                const selector = new SelectMenuBuilder()
-                    .setCustomId('select-menu-paginator')
-                    .setMinValues(1)
-                    .setMaxValues(1)
-                    .setOptions(embeds.map((v, i) => ({ label: `${i + 1}${i + 1 === 1 ? 'er' : 'e'}`, value: i.toString(), description: `Page ${i + 1}`, default: i === 0 })))
-                const row = new ActionRowBuilder({ components: [ selector ] }) as ActionRowBuilder<SelectMenuBuilder>;
+        if (i.customId === 'select') {
+            let trash: Collection<string, Message<boolean>> = new Collection();
+            
+            i.message.edit({ components: [ components({ selectDisabled: true }) ] })
+            i.deferUpdate().catch(() => {});
+            const msg = await interaction.channel.send({ embeds: [ paginationEmbeds.askPage(user) ] }).catch(() => {}) as Message<true>
+            trash.set(msg.id, msg);
+            
+            const collector = msg.channel.createMessageCollector({ filter: x => x.author.id === user.id, max: 1, time: 120000 });
+            collector.on('end', (collected) => {
+                if (collected.size > 0) trash.set(collected.first().id, collected.first());
 
-                const iReply = await reply({ fetchReply: true, components: [ row ], embeds: [ paginationSelect(user) ], ephemeral: true }).catch(() => {}) as Message<true>;
-                const choice = await waitForInteraction({ component_type: ComponentType.SelectMenu, message: iReply, user }).catch(() => {});
+                interaction.channel.bulkDelete(trash).catch(() => {});
+                const { content } = collected.first();
 
-                deleteReply().catch(() => {});
-                if (!choice) return;
-
-                embed = embeds[parseInt(choice.values[0])];
-            } else {
-                let rows = [new SelectMenuBuilder()] as unknown;
-
-                let rowIndex = 0;
-                for (let i = 0; i < embeds.length; i++) {
-                    const row = rows[rowIndex];
-                    row.addOptions(
-                        {
-                            label: `Page ${i}`,
-                            value: i.toString(),
-                            description: `Aller à la page ${i}`
-                        }
-                    );
-
-                    if (row.options.length === 24) {
-                        rowIndex++;
-                        (rows as SelectMenuBuilder[]).push(new SelectMenuBuilder());
+                let embed: EmbedBuilder;
+                if (content.toLocaleLowerCase() === 'cancel') embed = cancel();
+                else {
+                    const input = parseInt(content);
+                    if (isNaN(input) || !embeds[input - 1]) embed = paginationEmbeds.invalidPage(user);
+                    else {
+                        index = input - 1;
                     };
                 };
 
-                rows = (rows as []).map((builder: SelectMenuBuilder) => new ActionRowBuilder({ components: [ builder ] }) as ActionRowBuilder<SelectMenuBuilder>);
-
-                const iReply = await reply({ fetchReply: true, ephemeral: true, embeds: [ paginationSelect(user) ], components: (rows as ActionRowBuilder<SelectMenuBuilder>[]) }).catch(() => {}) as Message<true>;
-                const choice = await waitForInteraction({ component_type: ComponentType.SelectMenu, message: iReply, user }).catch(() => {});
-
-                deleteReply().catch(() => {});
-                if (!choice) return;
-
-                index = parseInt(choice.values[0]);
-                embed = embeds[parseInt(choice.values[0])];
-            };
+                if (embed) {
+                    interaction.channel.send({ embeds: [ embed ] }).then((x) => {
+                        setTimeout(() => {
+                            x.delete().catch(() => {});
+                        }, 6000);
+                    }).catch(() => {});
+                } else {
+                    i.message.edit({ embeds: [ embeds[index] ], components: [ components({}) ] }).catch(() => {});
+                };
+            });
+            return;
         };
 
-       deferUpdate().catch(() => {});
-       i.message.edit({ embeds: [ embed ], components: [ components() ] }).catch(() => {});
+       i.deferUpdate();
+       i.message.edit({ embeds: [ embed ], components: [ components({}) ] }).catch(() => {});
     });
 
     collector.on('end', () => {
-        msg.edit({ components: [ components(true) ] }).catch(() => {});
+        msg.edit({ components: [ components({ allDisabled: true }) ] }).catch(() => {});
     });
 };
