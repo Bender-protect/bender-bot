@@ -220,6 +220,9 @@ export default new Command({
 
                 if (proof) emb.setImage(proof.url);
                 interaction.editReply({ embeds: [ emb ] })
+            };
+            if (subcommand === 'réinitialiser') {
+                const user = args.getUser('utilisateur')
             }
         });
     }

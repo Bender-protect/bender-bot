@@ -182,4 +182,10 @@ export const paginatorClosed = (user: User, name: string) => basic(user)
 export const invalidProofType = (user: User) => basic(user)
     .setTitle("❌ Preuve invalide")
     .setDescription(`Les preuves ne sont acceptées que sous image en fichier \`jpg\` ou \`png\``)
-    .setColor('#ff0000')
+    .setColor('#ff0000');
+export const resetWarnConfirm = (user: User, u?: User) => {
+    return basic(user)
+        .setTitle('❓ Réinitialisation')
+        .setDescription(u ? `Voulez-vous réinitialiser les avertissements de <@${u.id}> ?` : "Voulez-vous réinitialiser les avertissements du serveur ?")
+        .setColor('Grey')
+}
