@@ -1,9 +1,9 @@
-import { ActionRowBuilder, ApplicationCommandOption, ApplicationCommandOptionType, ButtonBuilder, ButtonStyle, ComponentType, EmbedBuilder, InteractionReplyOptions } from "discord.js";
+import { ActionRowBuilder, ApplicationCommandOption, ApplicationCommandOptionType, ButtonBuilder, ButtonStyle, ComponentType, EmbedBuilder, GuildMember, InteractionReplyOptions } from "discord.js";
 import { Bender } from "../bender";
 import { Command } from "../structures/Command";
 import { warn, warns } from "../typings/warns";
-import { classic, sqlError } from "../utils/embeds";
-import { pagination } from "../utils/functions";
+import { classic, invalidProofType, sqlError } from "../utils/embeds";
+import { addLog, addWarn, checkPerms, pagination } from "../utils/functions";
 
 const userOption: ApplicationCommandOption = {
     name: 'utilisateur',
@@ -189,7 +189,37 @@ export default new Command({
                 interaction.editReply(replyData).catch(() => {});
             };
             if (subcommand === 'ajouter') {
-                 
+                const user = args.getMember('utilisateur') as GuildMember;
+                const reason = args.getString('raison', true);
+                const proof = args.getAttachment('preuve', false);
+
+                if (!checkPerms({ member: user, mod: interaction.member, interaction, checkBot: true, checkOwner: true, checkPosition: true, checkSelf: true })) return;
+                if (proof && !['jpg', 'png'].includes(proof.contentType)) return interaction.editReply({ embeds: [ invalidProofType(interaction.user) ] }).catch(() => {});
+
+                if (reason.length > 300) return interaction.editReply({ embeds: [ classic(interaction.user)
+                    .setTitle('Raison trop longue')
+                    .setDescription(`La raison que vous avez spécifiée est trop longue. Le maximum est **300 caractères**`)
+                    .setColor('#ff0000')
+                ] }).catch(() => {});
+
+                const warn = { user_id: user.id, mod_id: interaction.user.id, guild_id: interaction.guild.id, reason, proof: (proof?.url ?? ''), date: Date.now() };
+                addWarn(warn);
+                addLog(warn);
+
+                const emb = classic(interaction.user)
+                .setTitle('👮 Avertissement')
+                .setDescription(`<@${user.id}> a reçu un avertissement de <@${interaction.user.id}>`)
+                .setFields(
+                    {
+                        name: 'Raison',
+                        value: reason,
+                        inline: false
+                    }
+                )
+                .setColor('#ff0000');
+
+                if (proof) emb.setImage(proof.url);
+                interaction.editReply({ embeds: [ emb ] })
             }
         });
     }

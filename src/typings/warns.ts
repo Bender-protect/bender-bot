@@ -5,6 +5,6 @@ export type warn = {
     date: number;
     guild_id: string;
     proof: string;
-    id: number;
+    id?: number;
 };
 export type warns = warn[];
