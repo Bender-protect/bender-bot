@@ -5,7 +5,7 @@ const cache: {[key: string]: Map<string, number>} = {};
 
 export default new Event('messageCreate', (message) => {
     if (!message.guild) return;
-    if (Bender.whitelistManager.isWhitelisted(message.guild, message.author.id)) return;
+    if (Bender.whitelistManager.isWhitelisted(message.guild, message.author.id) || !Bender.configsManager.state(message.guild.id, 'antispam')) return;
     if (!cache[message.guild.id]) cache[message.guild.id] = new Map();
 
     const userData = cache[message.guild.id].get(message.author.id) || 0;
