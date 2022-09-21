@@ -1,4 +1,4 @@
-import { ButtonBuilder, ButtonStyle, SelectMenuBuilder } from "discord.js";
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, SelectMenuBuilder } from "discord.js";
 
 export const sanctionSelector = new SelectMenuBuilder()
     .setCustomId('sanction-select-menu')
@@ -43,3 +43,4 @@ export const noBtn = new ButtonBuilder()
     .setCustomId('no')
     .setLabel('Non')
     .setStyle(ButtonStyle.Danger);
+export const yesNoRow = new ActionRowBuilder({ components: [ yesBtn, noBtn ] }) as ActionRowBuilder<ButtonBuilder>

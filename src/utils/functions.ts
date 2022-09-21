@@ -67,9 +67,12 @@ type checkPermsOptions = {
     interaction: BenderInteraction;
     checkSelf?: boolean;
     checkOwner?: boolean;
-    checkBot: boolean;
+    checkBot?: boolean;
     checkBotPosition?: boolean;
     checkUserPosition?: boolean;
+    checkWhitelist?: {
+        ownerExcluded: boolean
+    }
 };
 
 export const checkPerms = ({ member, interaction, mod, ...options }: checkPermsOptions) => {
@@ -109,6 +112,14 @@ export const checkPerms = ({ member, interaction, mod, ...options }: checkPermsO
     if (options.checkSelf === true && mod.id === member.id) {
         reply({ embeds: [ perms.selfUser(mod.user) ] });
         return false;
+    };
+    if (options.checkWhitelist) {
+        if (!(options.checkWhitelist.ownerExcluded === true && mod.id === mod.guild.ownerId)) {
+            if (Bender.whitelistManager.isWhitelisted(member.guild, member.id)) {
+                reply({ embeds: [ perms.whiteListed(mod.user) ] });
+                return false;
+            };
+        };
     };
     return true;
 };

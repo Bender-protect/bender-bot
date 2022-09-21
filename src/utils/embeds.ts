@@ -161,7 +161,8 @@ export const perms = {
     memberPosition: (user: User, state: 'vous' | 'moi') => basic(user).setTitle('🚫 Position invalide').setDescription(`Cet utilisateur est **supérieur** ou **égal** à ${state}`).setColor('#ff0000'),
     owner: (user: User, owner: User) => basic(user).setTitle('🚫 Propriétaire du serveur').setDescription(`<@${owner.id}> est le propriétaire du serveur.\nVous ne pouvez pas exécuter cette action sur le propriétaire du serveur`).setColor('#ff0000'),
     selfUser: (user: User) => basic(user).setTitle('🚫 Auto-ciblage').setDescription(`Vous ne pouvez pas faire ça sur vous même`).setColor('#ff0000'),
-    bot: (user: User) => basic(user).setTitle('🚫 Bot').setDescription(`Je ne peux pas faire cette action sur un bot`).setColor('#ff0000')
+    bot: (user: User) => basic(user).setTitle('🚫 Bot').setDescription(`Je ne peux pas faire cette action sur un bot`).setColor('#ff0000'),
+    whiteListed: (user: User) => basic(user).setTitle('🚫 Whitelisté').setDescription(`Vous ne pouvez pas effectuer cette action sur un membre whitelisté`).setColor('#ff0000')
 };
 export const interactionNotAllowed = (user: User) => {
     return basic(user)
@@ -240,4 +241,22 @@ export const guildCreateMsg = (client: BenderClient) => {
             }
         )
         .setThumbnail('attachment://logo.png')
+};
+export const reasonTooLong = (user: User) => basic(user).setTitle('❌ Raison trop longue')
+    .setDescription(`La raison que vous avez spécifié est trop longue. Le maximum est **300 caractères**`)
+    .setColor('#ff0000');
+export const youveBenBanned = ({ user, guildName, reason, proof }: {user: User, reason: string, guildName: string, proof?: string}) => {
+    const embed = basic(user)
+        .setTitle("🚫 Bannissement")
+        .setDescription(`Vous avez été banni de ${guildName} pour la raison suivante :\n${reason}`)
+        .setColor('#ff0000')
+    
+    if (proof) embed.setImage(proof);
+    return embed;
+};
+export const banConfirm = (user: User, u: User) => {
+    return basic(user)
+        .setTitle('❓ Bannissement')
+        .setDescription(`Voulez-vous bannir <@${u.id}> ?`)
+        .setColor('#ff0000')
 }
