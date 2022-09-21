@@ -181,11 +181,43 @@ export const paginatorClosed = (user: User, name: string) => basic(user)
 
 export const invalidProofType = (user: User) => basic(user)
     .setTitle("❌ Preuve invalide")
-    .setDescription(`Les preuves ne sont acceptées que sous image en fichier \`jpg\` ou \`png\``)
+    .setDescription(`Les preuves ne sont acceptées que sous fichier image`)
     .setColor('#ff0000');
 export const resetWarnConfirm = (user: User, u?: User) => {
     return basic(user)
         .setTitle('❓ Réinitialisation')
         .setDescription(u ? `Voulez-vous réinitialiser les avertissements de <@${u.id}> ?` : "Voulez-vous réinitialiser les avertissements du serveur ?")
         .setColor('Grey')
-}
+};
+export const warnReset = (user: User, u?: User) => {
+    return basic(user)
+        .setTitle('🧹 Réinitialisation')
+        .setDescription(`Les avertissements ${u ? `de <@${u.id}>`: `du serveur`} ont été réinitialisés.`)
+        .setColor('#00ff00')
+};
+export const unexistingWarn = ({ user, u, id }:{user: User, u: User, id: number}) => {
+    return basic(user)
+        .setTitle("❌ Avertissement inexistant")
+        .setDescription(`<@${u.id}> n'a pas d'avertissement avec l'identifiant \`${id}\``)
+        .setColor('#ff0000')
+};
+export const deleteWarnConfirm = ({ user, u, reason, image }: { user: User, u: User, reason: string, image?: string }) => {
+    const embed = classic(user)
+        .setTitle('❓ Suppression')
+        .setDescription(`Voulez-vous supprimer l'avertissement de <@${u.id}> ?`)
+        .setFields({
+            name: 'Raison',
+            value: reason,
+            inline: false
+        })
+        .setColor('Yellow')
+    
+    if (image) embed.setImage(image);
+    return embed;
+};
+export const deleteWarn = ({ user, u, id }: { user: User, u: User, id: number }) => {
+    return basic(user)
+        .setTitle('👮 Suppression d\'avertissement')
+        .setDescription(`L'avertissement d'identifiant \`${id.toString()}\` de <@${u.id}> a été supprimé`)
+        .setColor('#00ff00')
+};

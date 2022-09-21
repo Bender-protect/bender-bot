@@ -12,6 +12,7 @@ export type configs = {
     antispam: boolean;
     guildUpdate_enable: boolean;
     anticap: boolean;
+    newAccounts: boolean;
 };
 
 export const configTypes: { name: string, value: keyof configs }[] = [
@@ -26,5 +27,6 @@ export const configTypes: { name: string, value: keyof configs }[] = [
     { name: 'Autorisation des bannissements', value: 'allowBan' },
     { name: 'Antispam', value: 'antispam' },
     { name: "Modification du serveur", value: 'guildUpdate_enable' },
-    { name: 'Anti lettres majuscules', value: 'anticap' }
+    { name: 'Anti lettres majuscules', value: 'anticap' },
+    { name: 'Anti nouveaux-comptes', value: 'newAccounts' }
 ];

@@ -1,6 +1,6 @@
 import { Guild, GuildMember, User } from "discord.js";
 import { database } from "../typings/Database";
-import { sanction, sanctions } from "../typings/sanctions";
+import { sanction, sanctionCorres, sanctions } from "../typings/sanctions";
 import { classic } from "../utils/embeds";
 import { addLog, addWarn, tempBan } from "../utils/functions";
 import { BenderClient } from "./Bender";
@@ -90,7 +90,7 @@ export class sanctionsManager {
             break;
         };
 
-        addLog({ guild_id: guild.id, user_id: member.id, mod_id: user.id, proof: '', reason: `${reason} (automodération)`, date: Date.now() });
+        addLog({ guild_id: guild.id, user_id: member.id, mod_id: user.id, proof: '', reason: `${reason} (automodération)`, date: Date.now(), type: `${sanctionCorres[sanction.type]} (automodération)` });
     }
     public set(guild_id: string, key: keyof sanctions, value: sanction) {
         let sql = `INSERT INTO sanctions (guild_id, ${key}) VALUES ("${guild_id}", '${JSON.stringify(value)}')`;

@@ -5,14 +5,15 @@ import { tempban } from "../typings/tempbans";
 import { warn } from "../typings/warns";
 import { waitForInteraction } from "./waitFor";
 import { cancel, interactionNotAllowed, paginationSelect, paginatorClosed, perms } from "./embeds";
+import { log } from "../typings/log";
 
-export const addLog = (options: warn) => {
-    Bender.db.query(`INSERT INTO logs (guild_id, mod_id, user_id, date, reason, proof) VALUES ("${options.guild_id}", "${options.mod_id}", "${options.user_id}", "${options.date}", "${options.reason}", "${options.proof ? options.proof : ''}")`, (e) => {
+export const addLog = (options: log) => {
+    Bender.db.query(`INSERT INTO logs (guild_id, mod_id, user_id, date, reason, proof, type) VALUES ("${options.guild_id}", "${options.mod_id}", "${options.user_id}", "${options.date}", "${options.reason}", "${options.proof ? options.proof : ''}", "${options.type}")`, (e) => {
         if (e) return console.log(e);
     });
 };
 export const addWarn = ({ user_id, mod_id, guild_id, reason, proof, date }: warn) => {
-    Bender.db.query(`INSERT INTO warns (guild_id, mod_id, user_id, date, reason, proof) VALUES ("${guild_id}", "${mod_id}", "${user_id}", "${date}", "${reason}", "${proof ? proof : ''}")`, (e) => {
+    Bender.db.query(`INSERT INTO warns (guild_id, mod_id, user_id, date, reason, proof) VALUES ("${guild_id}", "${mod_id}", "${user_id}", "${date}", "${reason.replace(/"/g, '\"')}", "${proof ? proof : ''}")`, (e) => {
         if (e) return console.log(e);
     });
 };
@@ -67,12 +68,13 @@ type checkPermsOptions = {
     checkSelf?: boolean;
     checkOwner?: boolean;
     checkBot: boolean;
-    checkPosition?: boolean;
+    checkBotPosition?: boolean;
+    checkUserPosition?: boolean;
 };
 
-export const checkPerms = ({  member, interaction, mod, ...options }: checkPermsOptions) => {
+export const checkPerms = ({ member, interaction, mod, ...options }: checkPermsOptions) => {
     const reply = (params) => {
-        if (interaction.replied) {
+        if (interaction.replied || interaction.deferred) {
             interaction.editReply(Object.assign(params, { components: [], files: [], attachments: [] })).catch(() => {});
         } else {
             interaction.reply(params).catch(() => {});
@@ -83,14 +85,16 @@ export const checkPerms = ({  member, interaction, mod, ...options }: checkPerms
         reply({ embeds: [ perms.client(mod.user) ] });
         return false;
     };
-    if (!options.checkPosition === false) {
-        const { position } = member.roles.highest;
-        if (position >= mod.roles.highest.position && mod.id !== mod.guild.ownerId) {
-            reply({ embeds: [perms.memberPosition(mod.user, 'vous') ] });
+    const { position } = member.roles.highest;
+    if (options.checkBotPosition === true) {
+        if (position >= mod.guild.members.me.roles.highest.position) {
+            reply({ embeds: [ perms.memberPosition(mod.user, 'moi') ] });
             return false;
         };
-        if (position >= mod.guild.members.me.roles.highest.position) {
-            reply({ embeds: [ perms.memberPosition(mod.user, 'vous') ] });
+    };
+    if (options.checkUserPosition === true) {
+        if (position >= mod.roles.highest.position && mod.id !== mod.guild.ownerId) {
+            reply({ embeds: [perms.memberPosition(mod.user, 'vous') ] });
             return false;
         };
     };

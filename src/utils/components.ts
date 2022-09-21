@@ -35,3 +35,11 @@ export const cancelButton = new ButtonBuilder()
     .setCustomId('cancel')
     .setLabel('Annuler')
     .setStyle(ButtonStyle.Danger);
+export const yesBtn = new ButtonBuilder()
+    .setCustomId('yes')
+    .setStyle(ButtonStyle.Success)
+    .setLabel('Oui');
+export const noBtn = new ButtonBuilder()
+    .setCustomId('no')
+    .setLabel('Non')
+    .setStyle(ButtonStyle.Danger);

@@ -1,9 +1,11 @@
-import { ActionRowBuilder, ApplicationCommandOption, ApplicationCommandOptionType, ButtonBuilder, ButtonStyle, ComponentType, EmbedBuilder, GuildMember, InteractionReplyOptions } from "discord.js";
+import { ActionRowBuilder, ApplicationCommandOption, ApplicationCommandOptionType, ButtonBuilder, ButtonStyle, ComponentType, EmbedBuilder, GuildMember, InteractionReplyOptions, Message } from "discord.js";
 import { Bender } from "../bender";
 import { Command } from "../structures/Command";
 import { warn, warns } from "../typings/warns";
-import { classic, invalidProofType, sqlError } from "../utils/embeds";
+import { noBtn, yesBtn } from "../utils/components";
+import { cancel, classic, deleteWarn, deleteWarnConfirm, invalidProofType, resetWarnConfirm, sqlError, unexistingWarn, warnReset } from "../utils/embeds";
 import { addLog, addWarn, checkPerms, pagination } from "../utils/functions";
+import { waitForInteraction } from "../utils/waitFor";
 
 const userOption: ApplicationCommandOption = {
     name: 'utilisateur',
@@ -91,7 +93,7 @@ export default new Command({
         const subcommand = args.getSubcommand();
         await interaction.deferReply();
 
-        Bender.db.query(`SELECT * FROM warns WHERE guild_id="${interaction.guild.id}"`, (err, req: warn[]) => {
+        Bender.db.query(`SELECT * FROM warns WHERE guild_id="${interaction.guild.id}"`, async(err, req: warn[]) => {
             if (err) {
                 console.log(err);
                 interaction.editReply({ embeds: [ sqlError(interaction.user) ] }).catch(() => {});
@@ -108,9 +110,14 @@ export default new Command({
                         }
                     );
                 };
-
+                
                 const user = args.getUser('utilisateur', true);
                 const userData = req.filter(x => x.user_id === user.id);
+                if (userData.length === 0) return interaction.editReply({ embeds: [ classic(interaction.user)
+                    .setTitle('❌ Pas d\'avertissements')
+                    .setDescription(`Il n'y a aucun avertissements sur ${interaction.guild.name}`)
+                    .setColor('#ff0000')
+                ] }).catch(() => {});
 
                 if (userData.length <= 6) {
                     const embed = classic(interaction.user)
@@ -147,14 +154,10 @@ export default new Command({
             };
             if (subcommand === 'identifier') {
                 const user = args.getUser('utilisateur', true);
-                const id = args.get('indentifiant', true).value;
+                const id = args.get('identifiant', true).value as number;
 
                 const warn = req.find(x => x.id === id && x.user_id === user.id);
-                if (!warn) return interaction.editReply({ embeds: [ classic(interaction.user)
-                    .setTitle("❌ Avertissement inexistant")
-                    .setDescription(`<@${user.id}> n'a pas d'avertissement avec l'identifiant \`${id}\``)
-                    .setColor('#ff0000')
-                ] }).catch(() => {});
+                if (!warn) return interaction.editReply({ embeds: [ unexistingWarn({ user: interaction.user, u: user, id })] }).catch(console.log);
 
                 const embed = classic(interaction.user)
                     .setTitle('ℹ️ Avertissement')
@@ -183,7 +186,14 @@ export default new Command({
                     embed.setImage(warn.proof);
                     replyData.embeds = [ embed ];
 
-                    replyData.components = [ new ActionRowBuilder({ type: ComponentType.Button, components: [ new ButtonBuilder({ label: 'Télécharger la preuve', customId: "proof-download", style: ButtonStyle.Secondary }) ] }) as ActionRowBuilder<ButtonBuilder> ];
+                    replyData.components = [
+                        new ActionRowBuilder()
+                            .setComponents(
+                                new ButtonBuilder()
+                                    .setStyle(ButtonStyle.Primary)
+                                    .setLabel('Télécharger la preuve')
+                                    .setCustomId('proof-download')
+                            ) as ActionRowBuilder<ButtonBuilder> ];
                 };
 
                 interaction.editReply(replyData).catch(() => {});
@@ -193,18 +203,18 @@ export default new Command({
                 const reason = args.getString('raison', true);
                 const proof = args.getAttachment('preuve', false);
 
-                if (!checkPerms({ member: user, mod: interaction.member, interaction, checkBot: true, checkOwner: true, checkPosition: true, checkSelf: true })) return;
-                if (proof && !['jpg', 'png'].includes(proof.contentType)) return interaction.editReply({ embeds: [ invalidProofType(interaction.user) ] }).catch(() => {});
+                if (!checkPerms({ member: user, mod: interaction.member, interaction, checkBot: true, checkOwner: true, checkUserPosition: true, checkSelf: true })) return;
+                if (proof && !proof.contentType.includes('image')) return interaction.editReply({ embeds: [ invalidProofType(interaction.user) ] }).catch(() => {});
 
                 if (reason.length > 300) return interaction.editReply({ embeds: [ classic(interaction.user)
                     .setTitle('Raison trop longue')
-                    .setDescription(`La raison que vous avez spécifiée est trop longue. Le maximum est **300 caractères**`)
+                    .setDescription(`La raison que vous avez spécifié est trop longue. Le maximum est **300 caractères**`)
                     .setColor('#ff0000')
                 ] }).catch(() => {});
 
-                const warn = { user_id: user.id, mod_id: interaction.user.id, guild_id: interaction.guild.id, reason, proof: (proof?.url ?? ''), date: Date.now() };
+                const warn = { user_id: user.id, mod_id: interaction.user.id, guild_id: interaction.guild.id, reason, proof: ((proof && proof?.url) ? proof.url : ''), date: Date.now() };
                 addWarn(warn);
-                addLog(warn);
+                addLog(Object.assign(warn, { type: 'Avertissement' }));
 
                 const emb = classic(interaction.user)
                 .setTitle('👮 Avertissement')
@@ -219,11 +229,79 @@ export default new Command({
                 .setColor('#ff0000');
 
                 if (proof) emb.setImage(proof.url);
-                interaction.editReply({ embeds: [ emb ] })
+                interaction.editReply({ embeds: [ emb ] }).catch(console.log);
             };
             if (subcommand === 'réinitialiser') {
-                const user = args.getUser('utilisateur')
-            }
+                const user = args.getUser('utilisateur');
+
+                await interaction.editReply({ embeds: [ resetWarnConfirm(interaction.user, user) ], components: [ new ActionRowBuilder({ components: [ yesBtn, noBtn ] }) as ActionRowBuilder<ButtonBuilder> ] }).catch(() => {});
+                const msg = await interaction.fetchReply() as Message<true>;
+
+                const choice = await waitForInteraction({
+                    message: msg,
+                    user: interaction.user,
+                    component_type: ComponentType.Button
+                });
+
+                if (!choice || choice.customId === 'no') return interaction.editReply({ components: [], embeds: [ cancel() ] }).catch(() => {});
+                await interaction.editReply({ embeds: [ warnReset(interaction.user, user) ], components: [] }).catch(() => {});
+
+                interaction.client.db.query(`DELETE FROM warns WHERE guild_id="${interaction.guild.id}"${user ? ` AND user_id="${user.id}"`:''}`, (er, re) => {
+                    if (er) {
+                        console.log(er);
+                        interaction.editReply({ embeds: [ sqlError(interaction.user) ] }).catch(() => {});
+                        return;
+                    };
+                    addLog({
+                        date: Date.now(),
+                        type: "Réinitialisation d'avertissements",
+                        reason: `Réinitialisation des avertissements ${user ? `de ${user.id} (${user.tag})` : 'du serveur'}`,
+                        user_id: user?.id ?? interaction.guild.id,
+                        guild_id: interaction.guild.id,
+                        mod_id: interaction.user.id,
+                        proof: ''
+                    });
+                });
+            };
+            if (subcommand === 'supprimer') {
+                const user = args.getUser('utilisateur', true);
+                const id = args.get('identifiant', true).value as number;
+
+                const warn = req.find(x => x.user_id === user.id && x.id === id);
+                if (!warn) return interaction.editReply({ embeds: [ unexistingWarn({ user: interaction.user, u: user, id }) ] }).catch(() => {});
+
+                await interaction.editReply({ embeds: [ deleteWarnConfirm({ user: interaction.user, u: user, reason: warn.reason, image: warn.proof.length > 2 ? warn.proof : undefined }) ], components: [ new ActionRowBuilder({ components: [
+                    yesBtn,
+                    noBtn
+                ] }) as ActionRowBuilder<ButtonBuilder> ] }).catch(() => {});
+                const msg = await interaction.fetchReply() as Message<true>;
+
+                const choice = await waitForInteraction({
+                    message: msg,
+                    component_type: ComponentType.Button,
+                    user: interaction.user
+                });
+                if (!choice || choice.customId === 'no') return interaction.editReply({ embeds: [ cancel() ], components: [] }).catch(() => {});
+                await interaction.editReply({ embeds: [ deleteWarn({ user: interaction.user, u: user, id }) ] }).catch(() => {});
+
+                Bender.db.query(`DELETE FROM warns WHERE guild_id="${interaction.guild.id}" AND user_id="${user.id}"`, (er) => {
+                    if (er) {
+                        console.log(er);
+                        interaction.editReply({ embeds: [ sqlError(interaction.user) ] }).catch(() => {});
+                        return;
+                    };
+
+                    addLog({
+                        date: Date.now(),
+                        type: "Suppression d'avertissement",
+                        user_id: user.id,
+                        mod_id: interaction.user.id,
+                        guild_id: interaction.guild.id,
+                        reason: `Suppression (auto-raison)`,
+                        proof: warn.proof
+                    });
+                });
+            };
         });
     }
 });
