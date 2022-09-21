@@ -3,7 +3,7 @@ import { Bender } from "../bender";
 import { Command } from "../structures/Command";
 import { warn, warns } from "../typings/warns";
 import { noBtn, yesBtn } from "../utils/components";
-import { cancel, classic, deleteWarn, deleteWarnConfirm, invalidProofType, resetWarnConfirm, sqlError, unexistingWarn, warnReset } from "../utils/embeds";
+import { cancel, classic, deleteWarn, deleteWarnConfirm, invalidProofType, reasonTooLong, resetWarnConfirm, sqlError, unexistingWarn, warnReset } from "../utils/embeds";
 import { addLog, addWarn, checkPerms, pagination } from "../utils/functions";
 import { waitForInteraction } from "../utils/waitFor";
 
@@ -206,11 +206,7 @@ export default new Command({
                 if (!checkPerms({ member: user, mod: interaction.member, interaction, checkBot: true, checkOwner: true, checkUserPosition: true, checkSelf: true })) return;
                 if (proof && !proof.contentType.includes('image')) return interaction.editReply({ embeds: [ invalidProofType(interaction.user) ] }).catch(() => {});
 
-                if (reason.length > 300) return interaction.editReply({ embeds: [ classic(interaction.user)
-                    .setTitle('Raison trop longue')
-                    .setDescription(`La raison que vous avez spécifié est trop longue. Le maximum est **300 caractères**`)
-                    .setColor('#ff0000')
-                ] }).catch(() => {});
+                if (reason.length > 300) return interaction.editReply({ embeds: [ reasonTooLong(interaction.user) ] }).catch(() => {});
 
                 const warn = { user_id: user.id, mod_id: interaction.user.id, guild_id: interaction.guild.id, reason, proof: ((proof && proof?.url) ? proof.url : ''), date: Date.now() };
                 addWarn(warn);
