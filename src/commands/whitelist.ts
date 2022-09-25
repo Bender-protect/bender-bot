@@ -61,7 +61,7 @@ export default new Command({
         };
         if (subcommand === 'ajouter') {
             const user = args.getUser('utilisateur',  true);
-            if (Bender.whitelistManager.isWhitelisted(interaction.guild, user.id)) return interaction.reply({ embeds: [ classic(interaction.user)
+            if (Bender.whitelistManager.isWhitelisted(interaction.guild, user.id, '')) return interaction.reply({ embeds: [ classic(interaction.user)
                 .setTitle("❌ Déjà ajouté")
                 .setDescription(`<@${user.id}> est déjà ajouté à la whiteliste`)
                 .setColor('#ff0000')
@@ -76,7 +76,7 @@ export default new Command({
         };
         if (subcommand === 'retirer') {
             const user = args.getUser('utilisateur', true);
-            if (!Bender.whitelistManager.isWhitelisted(interaction.guild, user.id) || interaction.user.id === interaction.guild.ownerId) return interaction.reply({ embeds: [ classic(interaction.user)
+            if (!Bender.whitelistManager.isWhitelisted(interaction.guild, user.id, '') || interaction.user.id === interaction.guild.ownerId) return interaction.reply({ embeds: [ classic(interaction.user)
                 .setTitle("❌ Non-whitelisté")
                 .setDescription(`<@${user.id}> n'est pas whitelisté, ou est le propriétaire du serveur.`)
                 .setColor('#ff0000')

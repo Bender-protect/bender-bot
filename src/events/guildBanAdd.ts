@@ -5,9 +5,9 @@ import { notWhitelisted } from "../utils/embeds";
 
 export default new Event('guildBanAdd', async(ban) => {
     const { guild, user } = ban;
-    const { executor, target } = (await guild.fetchAuditLogs({ type: AuditLogEvent.MemberBanAdd })).entries.first();
+    const { executor, target, reason } = (await guild.fetchAuditLogs({ type: AuditLogEvent.MemberBanAdd })).entries.first();
     if (target.id === user.id) {
-        if (!Bender.whitelistManager.isWhitelisted(guild, executor.id) && !Bender.configsManager.state(guild.id, 'allowBan')) {
+        if (!Bender.whitelistManager.isWhitelisted(guild, executor.id, reason) && !Bender.configsManager.state(guild.id, 'allowBan')) {
             guild.bans.remove(user, 'not whitelisted');
 
             Bender.sanctionsManager.applySanction({ guild, reason: `bannissement`, key: 'ban', member: (await guild.members.fetch(executor)), user: executor.client.user });

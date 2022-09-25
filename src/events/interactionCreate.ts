@@ -14,7 +14,7 @@ export default new Event('interactionCreate', async(inter) => {
 
         if (cmd?.ownerOnly === true && interaction.guild && interaction.guild.ownerId !== interaction.user.id) return interaction.reply({ embeds: [ ownerOnly(interaction.user, interaction.guild.ownerId) ] })
         if (cmd?.whitelist === true && interaction.guild) {
-            if (!Bender.whitelistManager.isWhitelisted(interaction.guild, interaction.user.id)) return interaction.reply({ embeds: [ notWhitelisted(interaction.user) ] }).catch(() => {});
+            if (!Bender.whitelistManager.isWhitelisted(interaction.guild, interaction.user.id, '')) return interaction.reply({ embeds: [ notWhitelisted(interaction.user) ] }).catch(() => {});
         };
 
         cmd.run({

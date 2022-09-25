@@ -115,7 +115,7 @@ export const checkPerms = ({ member, interaction, mod, ...options }: checkPermsO
     };
     if (options.checkWhitelist) {
         if (!(options.checkWhitelist.ownerExcluded === true && mod.id === mod.guild.ownerId)) {
-            if (Bender.whitelistManager.isWhitelisted(member.guild, member.id)) {
+            if (Bender.whitelistManager.isWhitelisted(member.guild, member.id, '')) {
                 reply({ embeds: [ perms.whiteListed(mod.user) ] });
                 return false;
             };

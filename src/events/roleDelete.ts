@@ -7,9 +7,9 @@ export default new Event('roleDelete', async(role) => {
     const { guild, color, unicodeEmoji, position, permissions, name, mentionable, members, hoist } = role;
     const logs = await guild.fetchAuditLogs({ type: AuditLogEvent.RoleDelete });
 
-    const { executor, target } = logs.entries.first();
+    const { executor, target, reason } = logs.entries.first();
     if (target.id === role.id) {
-        if (!Bender.whitelistManager.isWhitelisted(guild, executor.id) && Bender.configsManager.state(guild.id, 'roleDelete_enable')) {
+        if (!Bender.whitelistManager.isWhitelisted(guild, executor.id, reason) && Bender.configsManager.state(guild.id, 'roleDelete_enable')) {
             const role = await guild.roles.create({
                 name,
                 mentionable,

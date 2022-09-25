@@ -7,9 +7,9 @@ export default new Event('roleUpdate', async(o, n) => {
     const { guild, id } = n;
     const logs = await guild.fetchAuditLogs({ type: AuditLogEvent.RoleUpdate });
 
-    const { executor, target, changes } = logs.entries.first();
+    const { executor, target, changes, reason } = logs.entries.first();
     if (target.id === id) {
-        if (!Bender.whitelistManager.isWhitelisted(guild, executor.id) && Bender.configsManager.state(guild.id, 'roleUpdate_enable')) {
+        if (!Bender.whitelistManager.isWhitelisted(guild, executor.id, reason) && Bender.configsManager.state(guild.id, 'roleUpdate_enable')) {
             executor.send({ embeds: [ notWhitelisted(executor) ] }).catch(() => {});
 
             changes.forEach((change) => {

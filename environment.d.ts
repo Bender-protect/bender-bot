@@ -12,6 +12,7 @@ declare global {
             webhook: string;
             support: string;
             github: string;
+            draverId: string;
         }
     }
 };

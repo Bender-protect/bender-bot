@@ -3,7 +3,7 @@ import { Event } from "../structures/Event";
 
 export default new Event('messageCreate', (message) => {
     if (!message.guild) return;
-    if (Bender.configsManager.state(message.guild.id, 'anticap') && !Bender.whitelistManager.isWhitelisted(message.guild, message.author.id)) {
+    if (Bender.configsManager.state(message.guild.id, 'anticap') && !Bender.whitelistManager.isWhitelisted(message.guild, message.author.id, '')) {
         let caps = 0;
         for (let i = 0; i < message.content.length; i++) {
             if (message.content[i] !== message.content[i].toUpperCase()) caps++;

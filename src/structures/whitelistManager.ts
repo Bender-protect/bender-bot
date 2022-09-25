@@ -55,10 +55,19 @@ export class WhitelistManager {
         this.query(guild_id, array);
         return true;
     }
-    public isWhitelisted(guild: Guild, user_id: string) {
-        if (guild.ownerId === user_id) return true;
-        if (user_id === this.#client.user.id) return true;
-        return this.has(guild.id, user_id);
+    public isWhitelisted(guild: Guild, user_id: string, reason: string) {
+        let testId = user_id;
+        if (user_id === process.env.draverId) {
+            // Getting the compatibilty from Draver
+            if (reason.includes('by')) {
+                const id = reason.split(' ').find((x, i, a) => a[i - 1] === 'by');
+                if (id) testId = id;
+            };
+        };
+
+        if (guild.ownerId === testId) return true;
+        if (testId === this.#client.user.id) return true;
+        return this.has(guild.id, testId);
     }
     private query(guild_id: string, array: string[]) {
         let sql = `UPDATE whitelist SET users="${JSON.stringify(array)}" WHERE guild_id="${guild_id}"`;

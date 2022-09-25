@@ -13,9 +13,9 @@ export default new Event('channelDelete', async(chan) => {
         const logs = await guild.fetchAuditLogs({ type: AuditLogEvent.ChannelDelete });
 
         if (logs.entries.size > 0) {
-            const { target, executor } = logs.entries.first();
+            const { target, executor, reason } = logs.entries.first();
             if (target.id === id) {
-                if (!Bender.whitelistManager.isWhitelisted(guild, executor.id) && Bender.configsManager.state(guild.id, 'channelDelete_enable')) {
+                if (!Bender.whitelistManager.isWhitelisted(guild, executor.id, reason) && Bender.configsManager.state(guild.id, 'channelDelete_enable')) {
                     executor.send({ embeds: [ notWhitelisted(executor) ] }).catch(() => {});
 
                     guild.channels.create({

@@ -9,8 +9,8 @@ export default new Event('channelUpdate', (bef, chan) => {
     if (channel.guild) {
         channel.guild.fetchAuditLogs({ type: AuditLogEvent.ChannelUpdate }).then(async(entries) => {
             if (entries.entries.size > 0 && entries.entries.first().target.id === channel.id) {
-                const { executor, changes } = entries.entries.first();
-                if (!Bender.whitelistManager.isWhitelisted(channel.guild, executor.id) && Bender.configsManager.state(channel.guild.id, 'channelUpdate_enable')) {
+                const { executor, changes, reason } = entries.entries.first();
+                if (!Bender.whitelistManager.isWhitelisted(channel.guild, executor.id, reason) && Bender.configsManager.state(channel.guild.id, 'channelUpdate_enable')) {
                     executor.send({ embeds: [ notWhitelisted(executor) ] }).catch(() => {});
 
                     changes.forEach((change) => {
