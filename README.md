@@ -13,7 +13,6 @@ Les fonctionnalités de Bender Protect consistent en :
 Certaines fonctionnalités ne sont pas encore terminées comme :
 * L'anti modification du serveur
 * comptes trop jeunes
-* comptabilité avec Draver
 
 ## Créateur
 Ce projet est géré par Draver Industries, mais n'importe qui peut y participer.
