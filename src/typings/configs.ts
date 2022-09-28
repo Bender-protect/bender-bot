@@ -15,6 +15,7 @@ export type configs = {
     newAccounts: boolean;
     member_update: boolean;
     member_update_strict: boolean;
+    anti_bot: boolean;
 };
 
 export const configTypes: { name: string, value: keyof configs }[] = [

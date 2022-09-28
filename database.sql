@@ -19,7 +19,8 @@ CREATE TABLE configs (
     anticap TINYINT(1) NOT NULL DEFAULT '1',
     newAccounts TINYINT(1) NOT NULL DEFAULT '1',
     member_update TINYINT(1) NOT NULL DEFAULT '1',
-    member_update_strict TINYINT(1) NOT NULL DEFAULT '0'
+    member_update_strict TINYINT(1) NOT NULL DEFAULT '0',
+    anti_bot TINYINT(1) NOT NULL DEFAULT '0'
 );
 
 CREATE TABLE gbans (

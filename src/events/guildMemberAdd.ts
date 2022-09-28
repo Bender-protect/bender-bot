@@ -1,6 +1,7 @@
 import { Bender } from "../bender";
 import { Event } from "../structures/Event";
 import { classic, gbanned } from "../utils/embeds";
+import { addLog } from "../utils/functions";
 
 export default new Event('guildMemberAdd', async(member) => {
     Bender.configsManager.setup(member.guild.id);
@@ -12,6 +13,19 @@ export default new Event('guildMemberAdd', async(member) => {
         ] }).catch(() => {});
 
         member.kick('raidmode').catch(() => {});
+    };
+    if (Bender.configsManager.state(member.guild.id, 'anti_bot') && member.user.bot) {
+        member.kick(`Anti-bot enabled`).catch(() => {});
+
+        addLog({
+            guild_id: member.guild.id,
+            mod_id: Bender.user.id,
+            user_id: member.id,
+            type: 'Expulsion (automodération)',
+            reason: `Anti-bot activé`,
+            date: Date.now(),
+            proof: ''
+        });
     };
     if (Bender.configsManager.state(member.guild.id, 'gban')) {
         Bender.db.query(`SELECT users FROM gbans`, async(err, req) => {
