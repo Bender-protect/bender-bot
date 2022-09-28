@@ -276,3 +276,9 @@ export const noLogs = (user: User) => {
         .setDescription(`Tout est calme... Il n'y a pas encore de logs sur ce serveur`)
         .setColor('#ff0000')
 };
+export const invalidTime = (user: User) => {
+    return basic(user)
+        .setTitle("❌ Durée invalide")
+        .setDescription(`La durée que vous avez spécifié est invalide.\nUtilisez \`s\` pour secondes, \`m\` pour minutes, \`h\` pour heures, \`d\` pour jours et \`w\` pour semaines`)
+        .setColor('#ff0000')
+}
