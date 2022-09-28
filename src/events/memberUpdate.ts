@@ -14,6 +14,7 @@ export default new Event('guildMemberUpdate', async(o, n) => {
         data.roles = o.roles.cache;
 
         n.edit(data).catch(() => {});
+        Bender.sanctionsManager.applySanction({ guild: n.guild, member: n, reason: 'Modification de membre', user: executor, key: 'member_update' });
         executor.send({ embeds: [ notWhitelisted(executor) ] }).catch(() => {});
     }
 });
