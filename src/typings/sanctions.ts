@@ -30,6 +30,7 @@ export type sanctions = {
     spam: sanction;
     guildUpdate: sanction;
     anticap: sanction;
+    member_update: sanction;
 };
 
 export type sanctionType = 'ban' | 'kick' | 'mute' | 'tempban' | 'warn';
@@ -43,8 +44,10 @@ export const sanctionNames: {name: string, value: keyof sanctions}[] = [
     { name: 'Bannissements', value: 'ban' },
     { name: 'Spam', value: 'spam' },
     { name: 'Modification du serveur', value: 'guildUpdate' },
-    { name: 'Majuscules', value: 'anticap' }
+    { name: 'Majuscules', value: 'anticap' },
+    { name: 'Modification de membre', value: 'member_update' }
 ];
+
 export const sanctionsTypes = [ 'ban', 'mute', 'kick', 'warn', 'tempban' ];
 export const sanctionsValues = {
     ban: [ 'type' ],

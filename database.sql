@@ -17,7 +17,9 @@ CREATE TABLE configs (
     gban TINYINT(1) NOT NULL DEFAULT '1',
     guildUpdate_enable TINYINT(1) NOT NULL DEFAULT '1',
     anticap TINYINT(1) NOT NULL DEFAULT '1',
-    newAccounts TINYINT(1) NOT NULL DEFAULT '1' 
+    newAccounts TINYINT(1) NOT NULL DEFAULT '1',
+    member_update TINYINT(1) NOT NULL DEFAULT '1',
+    member_update_strict TINYINT(1) NOT NULL DEFAULT '0'
 );
 
 CREATE TABLE gbans (
@@ -41,7 +43,8 @@ CREATE TABLE sanctions (
     spam LONGTEXT NOT NULL DEFAULT '{"type": "mute", "time": 300}',
     ban LONGTEXT NOT NULL DEFAULT '{"type": "warn"}',
     anticap LONGTEXT NOT NULL DEFAULT '{"type": "mute", "time": 300}',
-    newAccounts LONGTEXT NOT NULL DEFAULT '{"type": "tempban", "time": 86400}'
+    newAccounts LONGTEXT NOT NULL DEFAULT '{"type": "tempban", "time": 86400}',
+    member_update NOT NULL DEFAULT '{"type": "warn"}'
 );
 CREATE TABLE anticap (
     guild_id VARCHAR(255) NOT NULL PRIMARY KEY,

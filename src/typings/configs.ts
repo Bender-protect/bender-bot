@@ -13,6 +13,8 @@ export type configs = {
     guildUpdate_enable: boolean;
     anticap: boolean;
     newAccounts: boolean;
+    member_update: boolean;
+    member_update_strict: boolean;
 };
 
 export const configTypes: { name: string, value: keyof configs }[] = [
@@ -28,5 +30,7 @@ export const configTypes: { name: string, value: keyof configs }[] = [
     { name: 'Antispam', value: 'antispam' },
     { name: "Modification du serveur", value: 'guildUpdate_enable' },
     { name: 'Anti lettres majuscules', value: 'anticap' },
-    { name: 'Anti nouveaux-comptes', value: 'newAccounts' }
+    { name: 'Anti nouveaux-comptes', value: 'newAccounts' },
+    { name: "Anti modification de membres", value: 'member_update' },
+    { name: 'Anti modification de membres strict', value: 'member_update' }
 ];
