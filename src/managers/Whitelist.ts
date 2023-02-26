@@ -10,6 +10,8 @@ export class WhitelistManager {
 
     public getAccess(guild_id: string, user_id: string): false | whitelistedAccess {
         if (!this.isWhitelisted(guild_id, user_id)) return false;
+        if (this.isOwner(guild_id, user_id)) return 'admin';
+
         return this.getList(guild_id).find((x) => x.user_id === user_id).access;
     }
     public isWhitelisted(guild_id: string, user_id: string) {
@@ -18,7 +20,28 @@ export class WhitelistManager {
     public getList(guild_id: string) {
         return this._cache.get(guild_id)?.list ?? [];
     }
+    public getOwner(guild_id: string) {
+        return this._cache.get(guild_id)?.owner;
+    }
+    public isOwner(guild_id: string, user_id: string) {
+        return this.getOwner(guild_id) === user_id;
+    }
+    public init(guild_id: string, owner: string) {
+        if (this._cache.has(guild_id)) return false;
+        this._cache.set(guild_id, {
+            list: [],
+            owner,
+            guild_id
+        });
+
+        query(
+            `INSERT INTO ${DatabaseTables.WhiteList} ( guild_id, owner, list ) VALUES ( '${guild_id}', '${owner}', '[]' )`
+        );
+        return true;
+    }
     public setAccess(guild_id: string, user_id: string, access: whitelistedAccess) {
+        if (this.isOwner(guild_id, user_id)) return true;
+
         const list = this.getList(guild_id);
         if (!list.find((x) => x.user_id === user_id)) {
             list.push({
@@ -38,6 +61,8 @@ export class WhitelistManager {
         return list;
     }
     public removeAccess(guild_id: string, user_id: string) {
+        if (this.isOwner(guild_id, user_id)) return false;
+
         const list = this.getList(guild_id);
         if (!this.isWhitelisted(guild_id, user_id)) return true;
 
