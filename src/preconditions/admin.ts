@@ -1,8 +1,8 @@
 import { Precondition } from 'amethystjs';
 import { compareWhitelistAccess } from '../utils/toolbox';
-import { whitelistManager } from '../utils/embeds';
+import { whitelistAdmin } from '../utils/embeds';
 
-export default new Precondition('whitelist manager')
+export default new Precondition('whitelist admin')
     .setChatInputRun(({ interaction }) => {
         if (!interaction.guild)
             return {
@@ -14,14 +14,14 @@ export default new Precondition('whitelist manager')
         if (
             compareWhitelistAccess(
                 interaction.client.Whitelist.getAccess<true>(interaction.guild.id, interaction.user.id)
-            ).above.includes('manager')
+            ).above.includes('admin')
         )
             return {
                 ok: false,
                 interaction,
                 isChatInput: true,
                 metadata: {
-                    embedKey: 'whitelistManager'
+                    embedKey: 'whitelistAdmin'
                 }
             };
         return {
@@ -35,13 +35,13 @@ export default new Precondition('whitelist manager')
 
         if (
             compareWhitelistAccess(button.client.Whitelist.getAccess<true>(button.guild.id, user.id)).above.includes(
-                'manager'
+                'admin'
             )
         ) {
             button
                 .reply({
                     ephemeral: true,
-                    embeds: [whitelistManager(user)]
+                    embeds: [whitelistAdmin(user)]
                 })
                 .catch(() => {});
             return {

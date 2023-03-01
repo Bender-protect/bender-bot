@@ -8,8 +8,12 @@ export class WhitelistManager {
         this.start();
     }
 
-    public getAccess(guild_id: string, user_id: string): false | whitelistedAccess {
-        if (!this.isWhitelisted(guild_id, user_id)) return false;
+    public getAccess<Force extends boolean = false>(
+        guild_id: string,
+        user_id: string
+    ): Force extends true ? whitelistedAccess : false | whitelistedAccess {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        if (!this.isWhitelisted(guild_id, user_id)) return false as any;
         if (this.isOwner(guild_id, user_id)) return 'admin';
 
         return this.getList(guild_id).find((x) => x.user_id === user_id).access;
